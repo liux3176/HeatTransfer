@@ -1,0 +1,1451 @@
+(* Content-type: application/mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 7.0' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       145,          7]
+NotebookDataLength[     36649,       1441]
+NotebookOptionsPosition[     35296,       1395]
+NotebookOutlinePosition[     36009,       1421]
+CellTagsIndexPosition[     35966,       1418]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+Cell[BoxData[
+ StyleBox[
+  RowBox[{"Two", "-", 
+   RowBox[{"compartment", " ", "model"}]}], "Title",
+  FontSize->24,
+  FontColor->RGBColor[0, 0, 1]]], "Input",
+ TextAlignment->Center],
+
+Cell[TextData[{
+ StyleBox["This tutorial evaluates clearance kinetics for two compartment \
+model. For a rapid intravenous case, we can solve the ODEs and generate \
+distribution profiles for each compartment. Parameter values used to generate \
+the current model are described below (based on mouse model with body weight \
+of about 20g)[Ya-ping Li et al. 2001]. \n\n",
+  FontColor->RGBColor[0, 0, 1]],
+ Cell[BoxData[GridBox[{
+    {
+     StyleBox["Parameter", "Text",
+      FontColor->RGBColor[0, 0, 1]], 
+     StyleBox["Description", "Text",
+      FontColor->RGBColor[0, 0, 1]], 
+     StyleBox[
+      RowBox[{"Current", " ", "Value"}], "Text",
+      FontColor->RGBColor[0, 0, 1]]},
+    {
+     StyleBox[
+      SubscriptBox["k", "12"], "Text",
+      FontWeight->"Plain",
+      FontVariations->{"CompatibilityType"->0},
+      FontColor->RGBColor[0, 0, 1]], 
+     StyleBox[
+      RowBox[{
+      "Transport", " ", "rate", " ", "constant", " ", "from", " ", "central", 
+       " ", "to", " ", "peripheral", " "}], "Text",
+      FontWeight->"Plain",
+      FontVariations->{"CompatibilityType"->0},
+      FontColor->RGBColor[0, 0, 1]], 
+     StyleBox[
+      RowBox[{"0.19", 
+       StyleBox[
+        SuperscriptBox["hr", 
+         RowBox[{"-", "1"}]], "Text",
+        FontColor->RGBColor[0, 0, 1]]}], "Text",
+      FontWeight->"Plain",
+      FontVariations->{"CompatibilityType"->0},
+      FontColor->RGBColor[0, 0, 1]]},
+    {
+     StyleBox[
+      SubscriptBox["k", "21"], "Text",
+      FontWeight->"Plain",
+      FontVariations->{"CompatibilityType"->0},
+      FontColor->RGBColor[0, 0, 1]], 
+     StyleBox[
+      RowBox[{
+      "Transport", " ", "rate", " ", "constant", " ", "from", " ", 
+       "peripheral", " ", "to", " ", "central", " "}], "Text",
+      FontWeight->"Plain",
+      FontVariations->{"CompatibilityType"->0},
+      FontColor->RGBColor[0, 0, 1]], 
+     StyleBox[
+      RowBox[{"0.35", " ", 
+       StyleBox[
+        SuperscriptBox["hr", 
+         RowBox[{"-", "1"}]], "Text",
+        FontColor->RGBColor[0, 0, 1]]}], "Text",
+      FontWeight->"Plain",
+      FontVariations->{"CompatibilityType"->0},
+      FontColor->RGBColor[0, 0, 1]]},
+    {
+     StyleBox[
+      SubscriptBox["k", "e"], "Text",
+      FontWeight->"Plain",
+      FontVariations->{"CompatibilityType"->0},
+      FontColor->RGBColor[0, 0, 1]], 
+     StyleBox[
+      RowBox[{
+      "Elimination", " ", "rate", " ", "constantfrom", " ", "central", " ", 
+       "compartment"}], "Text",
+      FontWeight->"Plain",
+      FontVariations->{"CompatibilityType"->0},
+      FontColor->RGBColor[0, 0, 1]], 
+     StyleBox[
+      RowBox[{"0.14", " ", 
+       StyleBox[
+        SuperscriptBox["hr", 
+         RowBox[{"-", "1"}]], "Text",
+        FontColor->RGBColor[0, 0, 1]]}], "Text",
+      FontWeight->"Plain",
+      FontVariations->{"CompatibilityType"->0},
+      FontColor->RGBColor[0, 0, 1]]},
+    {
+     StyleBox[
+      SubscriptBox["p", "0"], "Text",
+      FontWeight->"Plain",
+      FontVariations->{"CompatibilityType"->0},
+      FontColor->RGBColor[0, 0, 1]], 
+     StyleBox[
+      RowBox[{"Initial", " ", "dose"}], "Text",
+      FontWeight->"Plain",
+      FontVariations->{"CompatibilityType"->0},
+      FontColor->RGBColor[0, 0, 1]], 
+     StyleBox[
+      RowBox[{"0.5", " ", "\[Mu]g"}], "Text",
+      FontWeight->"Plain",
+      FontVariations->{"CompatibilityType"->0},
+      FontColor->RGBColor[0, 0, 1]]},
+    {
+     StyleBox[
+      SubscriptBox["t", 
+       RowBox[{
+        RowBox[{"1", "/", "2"}], ",", 
+        SubscriptBox["\[Lambda]", "1"]}]], "Text",
+      FontWeight->"Plain",
+      FontVariations->{"CompatibilityType"->0},
+      FontColor->RGBColor[0, 0, 1]], 
+     StyleBox[
+      RowBox[{
+       RowBox[{"plasma", " ", "half"}], "-", 
+       RowBox[{"life", " ", "in", "  ", 
+        SubscriptBox["\[Lambda]", "1"], " ", "phase", " "}]}], "Text",
+      FontWeight->"Plain",
+      FontVariations->{"CompatibilityType"->0},
+      FontColor->RGBColor[0, 0, 1]], 
+     StyleBox[
+      RowBox[{"1.29", " ", "hr"}], "Text",
+      FontWeight->"Plain",
+      FontVariations->{"CompatibilityType"->0},
+      FontColor->RGBColor[0, 0, 1]]},
+    {
+     StyleBox[
+      SubscriptBox["t", 
+       RowBox[{
+        RowBox[{"1", "/", "2"}], ",", 
+        SubscriptBox["\[Lambda]", "2"]}]], "Text",
+      FontWeight->"Plain",
+      FontVariations->{"CompatibilityType"->0},
+      FontColor->RGBColor[0, 0, 1]], 
+     StyleBox[
+      RowBox[{
+       RowBox[{"plasma", " ", "half"}], "-", 
+       RowBox[{"life", " ", "in", "  ", 
+        SubscriptBox["\[Lambda]", "2"], " ", "phase", " "}]}], "Text",
+      FontWeight->"Plain",
+      FontVariations->{"CompatibilityType"->0},
+      FontColor->RGBColor[0, 0, 1]], 
+     StyleBox[
+      RowBox[{"7.42", " ", "hr"}], "Text",
+      FontWeight->"Plain",
+      FontVariations->{"CompatibilityType"->0},
+      FontColor->RGBColor[0, 0, 1]]},
+    {
+     StyleBox[
+      SubscriptBox["AUC", "1"], "Text",
+      FontWeight->"Plain",
+      FontVariations->{"CompatibilityType"->0},
+      FontColor->RGBColor[0, 0, 1]], 
+     StyleBox[
+      RowBox[{
+      "Area", " ", "under", " ", "the", " ", "central", " ", "compartment", 
+       " ", "curve"}], "Text",
+      FontWeight->"Plain",
+      FontVariations->{"CompatibilityType"->0},
+      FontColor->RGBColor[0, 0, 1]], 
+     StyleBox[
+      RowBox[{
+       StyleBox["(", "Text"], 
+       RowBox[{
+        StyleBox["hr", "Text",
+         FontColor->RGBColor[0, 0, 1]], "\[CenterDot]", "\[Mu]g", 
+        "\[CenterDot]", 
+        SuperscriptBox["ml", 
+         RowBox[{"-", "1"}]]}], ")"}], "Text",
+      FontWeight->"Plain",
+      FontVariations->{"CompatibilityType"->0},
+      FontColor->RGBColor[0, 0, 1]]},
+    {
+     StyleBox["CL", "Text",
+      FontWeight->"Plain",
+      FontVariations->{"CompatibilityType"->0},
+      FontColor->RGBColor[0, 0, 1]], 
+     StyleBox["Clearance", "Text",
+      FontWeight->"Plain",
+      FontVariations->{"CompatibilityType"->0},
+      FontColor->RGBColor[0, 0, 1]], 
+     StyleBox[
+      RowBox[{"(", 
+       RowBox[{"ml", "\[CenterDot]", 
+        SuperscriptBox["hr", 
+         RowBox[{"-", "1"}]]}], ")"}], "Text",
+      FontWeight->"Plain",
+      FontVariations->{"CompatibilityType"->0},
+      FontColor->RGBColor[0, 0, 1]]},
+    {
+     StyleBox["p", "Text",
+      FontWeight->"Plain",
+      FontVariations->{"CompatibilityType"->0},
+      FontColor->RGBColor[0, 0, 1]], 
+     StyleBox[
+      RowBox[{
+      "Amount", " ", "of", " ", "drug", " ", "in", " ", "the", " ", "central",
+        " ", "compartment"}], "Text",
+      FontWeight->"Plain",
+      FontVariations->{"CompatibilityType"->0},
+      FontColor->RGBColor[0, 0, 1]], 
+     StyleBox["-", "Text",
+      FontWeight->"Plain",
+      FontVariations->{"CompatibilityType"->0},
+      FontColor->RGBColor[0, 0, 1]]},
+    {
+     StyleBox["s", "Text",
+      FontWeight->"Plain",
+      FontVariations->{"CompatibilityType"->0},
+      FontColor->RGBColor[0, 0, 1]], 
+     StyleBox[
+      RowBox[{
+      "Amount", " ", "of", " ", "drug", " ", "in", " ", "the", " ", 
+       "peripheral", " ", "compartment"}], "Text",
+      FontWeight->"Plain",
+      FontVariations->{"CompatibilityType"->0},
+      FontColor->RGBColor[0, 0, 1]], 
+     StyleBox["-", "Text",
+      FontWeight->"Plain",
+      FontVariations->{"CompatibilityType"->0},
+      FontColor->RGBColor[0, 0, 1]]},
+    {
+     StyleBox[
+      SubscriptBox["V", "c"], "Text",
+      FontWeight->"Plain",
+      FontVariations->{"CompatibilityType"->0},
+      FontColor->RGBColor[0, 0, 1]], 
+     StyleBox[
+      RowBox[{
+      "Volume", " ", "of", " ", "distribution", " ", "of", " ", "central", 
+       " ", "compartment"}], "Text",
+      FontWeight->"Plain",
+      FontVariations->{"CompatibilityType"->0},
+      FontColor->RGBColor[0, 0, 1]], 
+     StyleBox[
+      RowBox[{"5.56", "ml"}], "Text",
+      FontWeight->"Plain",
+      FontVariations->{"CompatibilityType"->0},
+      FontColor->RGBColor[0, 0, 1]]}
+   },
+   GridBoxDividers->{
+    "Columns" -> {{True}}, "ColumnsIndexed" -> {}, "Rows" -> {{True}}, 
+     "RowsIndexed" -> {}}]],
+  TextAlignment->Center],
+ "\n",
+ StyleBox["\nTo run a different simulation simply change these values when a \
+pop-up window appears. Parameters that can be changed are in red fonts. ",
+  FontColor->RGBColor[0, 0, 1]],
+ "      \n"
+}], "Input",
+ PageWidth->WindowWidth,
+ CellMargins->{{Inherited, 0}, {Inherited, Inherited}},
+ Evaluatable->False,
+ CellSize->{967, Inherited},
+ TextAlignment->Left,
+ ImageRegion->{{0, 1}, {0, 1}},
+ Background->GrayLevel[0.900008],
+ ButtonBoxOptions->{Active->True,
+ ButtonFunction:>
+  Function[{Demo`Private`contents, Demo`Private`idorgrid}, SelectionMove[
+     ButtonNotebook[], All, ButtonCell]; Demo`Private`cell = NotebookRead[
+      ButtonNotebook[]]; Demo`Private`framepos = First[
+      Sort[
+       Position[Demo`Private`cell, 
+        FrameBox[
+         PatternTest[
+          Blank[], 
+          Function[{Demo`Private`x}, 
+           Not[
+            FreeQ[
+             Unevaluated[Demo`Private`x], Demo`Private`idorgrid]], {
+           HoldAll}]], 
+         BlankNullSequence[]]], OrderedQ[{
+         Length[#2], 
+         Length[#]}]& ]]; 
+   If[Head[Demo`Private`idorgrid] =!= GridBox, Demo`Private`newframe = 
+     FrameBox[
+       RowBox[{
+         If[Head[Demo`Private`contents] === BoxData, 
+          First[Demo`Private`contents], Demo`Private`contents], 
+         With[{Demo`Private`thegrid = First[
+             Cases[
+              Part[Demo`Private`cell, 
+               Apply[Sequence, Demo`Private`framepos]], 
+              Blank[GridBox], Infinity]]}, 
+          InterpretationBox[
+           ButtonBox[
+           "\[FilledDownTriangle]", Active -> True, Background -> 
+            GrayLevel[0.6], ButtonData -> Demo`Private`thegrid], 
+           Sequence[], Editable -> True]]}], BoxFrame -> True, 
+       If[Complement[
+          Cases[Demo`Private`contents, Pattern[Demo`Private`h, 
+             Blank[]][
+             BlankSequence[]] -> Demo`Private`h, Infinity], {
+          BoxData, RowBox, List}] =!= {}, 
+        BoxMargins -> {{0.3, 0}, {0.9, 0.5}}, 
+        BoxMargins -> {{0.3, 0}, {0, 0}}]], Demo`Private`newframe = 
+     FrameBox[Demo`Private`idorgrid, BoxFrame -> True, BoxMargins -> False]]; 
+   NotebookWrite[
+     ButtonNotebook[], 
+     ReplacePart[
+     Demo`Private`cell, Demo`Private`newframe, Demo`Private`framepos], All]],
+ Evaluator->Automatic}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   StyleBox[
+    SubscriptBox["k", "12"],
+    FontColor->RGBColor[1, 0, 0]], "=", 
+   RowBox[{"Input", "[", "\"\<Please enter a value for \!\(\*
+StyleBox[SubscriptBox[\"k\", \"12\"], \"Text\",
+FontColor->RGBColor[1, 0, 0]]\) rate constant\>\"", "]"}]}], ";"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   StyleBox[
+    SubscriptBox["k", "21"],
+    FontColor->RGBColor[1, 0, 0]], "=", 
+   RowBox[{"Input", "[", "\"\<Please enter a value for \!\(\*
+StyleBox[SubscriptBox[\"k\", \"21\"], \"Text\",
+FontColor->RGBColor[1, 0, 0]]\)\!\(\*
+StyleBox[\" \", \"Text\",
+FontColor->RGBColor[1, 0, 0]]\)rate constant\>\"", "]"}]}], ";"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   StyleBox[
+    SubscriptBox["k", "e"],
+    FontColor->RGBColor[1, 0, 0]], "=", 
+   RowBox[{
+   "Input", "[", "\"\<Please enter a value for elimination rate constant\>\"",
+     "]"}]}], ";"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   StyleBox[
+    SubscriptBox["p", "0"],
+    FontColor->RGBColor[1, 0, 0]], "=", 
+   RowBox[{"Input", "[", "\"\<Please enter a value for dose\>\"", "]"}]}], 
+  ";"}]], "Input"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   StyleBox[
+    SubscriptBox["V", "c"],
+    FontColor->RGBColor[1, 0, 0]], "=", 
+   RowBox[{
+   "Input", "[", 
+    "\"\<Please enter a value for distribution volume for central compartment\
+\>\"", "]"}]}], ";"}]], "Input"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  StyleBox["CL",
+   FontColor->GrayLevel[0]], 
+  StyleBox["=",
+   FontColor->GrayLevel[0]], 
+  RowBox[{
+   SubscriptBox["V", "c"], 
+   StyleBox["\[Times]",
+    FontColor->GrayLevel[0]], 
+   SubscriptBox["k", "e"]}]}]], "Input"],
+
+Cell[BoxData["1.1119999999999999`"], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"eqns", "=", 
+  RowBox[{"Join", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{
+       RowBox[{
+        SuperscriptBox["p", "\[Prime]",
+         MultilineFunction->None], "[", "t", "]"}], "\[Equal]", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"-", 
+          RowBox[{"(", 
+           RowBox[{
+            SubscriptBox["k", "12"], "+", 
+            SubscriptBox["k", "e"]}], ")"}]}], " ", 
+         RowBox[{"p", "[", "t", "]"}]}], "+", 
+        RowBox[{
+         SubscriptBox["k", "21"], " ", 
+         RowBox[{"s", "[", "t", "]"}]}]}]}], ",", 
+      RowBox[{
+       RowBox[{
+        SuperscriptBox["s", "\[Prime]",
+         MultilineFunction->None], "[", "t", "]"}], "==", 
+       RowBox[{
+        RowBox[{
+         SubscriptBox["k", "12"], " ", 
+         RowBox[{"p", "[", "t", "]"}]}], "-", 
+        RowBox[{
+         SubscriptBox["k", "21"], " ", 
+         RowBox[{"s", "[", "t", "]"}]}]}]}], ",", 
+      RowBox[{
+       RowBox[{"p", "[", "0", "]"}], "\[Equal]", 
+       SubscriptBox["p", "0"]}], ",", 
+      RowBox[{
+       RowBox[{"s", "[", "0", "]"}], "\[Equal]", "0"}]}], "}"}], ",", 
+    RowBox[{"{", 
+     RowBox[{"p", ",", "s"}], "}"}], ",", 
+    RowBox[{"{", 
+     RowBox[{"t", ",", "720"}], "}"}]}], "]"}]}]], "Input",
+ ImageRegion->{{0, 1}, {0, 1}},
+ ButtonBoxOptions->{Active->True,
+ ButtonFunction:>
+  Function[{Demo`Private`contents, Demo`Private`idorgrid}, SelectionMove[
+     ButtonNotebook[], All, ButtonCell]; Demo`Private`cell = NotebookRead[
+      ButtonNotebook[]]; Demo`Private`framepos = First[
+      Sort[
+       Position[Demo`Private`cell, 
+        FrameBox[
+         PatternTest[
+          Blank[], 
+          Function[{Demo`Private`x}, 
+           Not[
+            FreeQ[
+             Unevaluated[Demo`Private`x], Demo`Private`idorgrid]], {
+           HoldAll}]], 
+         BlankNullSequence[]]], OrderedQ[{
+         Length[#2], 
+         Length[#]}]& ]]; 
+   If[Head[Demo`Private`idorgrid] =!= GridBox, Demo`Private`newframe = 
+     FrameBox[
+       RowBox[{
+         If[Head[Demo`Private`contents] === BoxData, 
+          First[Demo`Private`contents], Demo`Private`contents], 
+         With[{Demo`Private`thegrid = First[
+             Cases[
+              Part[Demo`Private`cell, 
+               Apply[Sequence, Demo`Private`framepos]], 
+              Blank[GridBox], Infinity]]}, 
+          InterpretationBox[
+           ButtonBox[
+           "\[FilledDownTriangle]", Active -> True, Background -> 
+            GrayLevel[0.6], ButtonData -> Demo`Private`thegrid], 
+           Sequence[], Editable -> True]]}], BoxFrame -> True, 
+       If[Complement[
+          Cases[Demo`Private`contents, Pattern[Demo`Private`h, 
+             Blank[]][
+             BlankSequence[]] -> Demo`Private`h, Infinity], {
+          BoxData, RowBox, List}] =!= {}, 
+        BoxMargins -> {{0.3, 0}, {0.9, 0.5}}, 
+        BoxMargins -> {{0.3, 0}, {0, 0}}]], Demo`Private`newframe = 
+     FrameBox[Demo`Private`idorgrid, BoxFrame -> True, BoxMargins -> False]]; 
+   NotebookWrite[
+     ButtonNotebook[], 
+     ReplacePart[
+     Demo`Private`cell, Demo`Private`newframe, Demo`Private`framepos], All]],
+ Evaluator->Automatic}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{
+    RowBox[{
+     SuperscriptBox["p", "\[Prime]",
+      MultilineFunction->None], "[", "t", "]"}], "\[Equal]", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"-", "0.39`"}], " ", 
+      RowBox[{"p", "[", "t", "]"}]}], "+", 
+     RowBox[{"0.5`", " ", 
+      RowBox[{"s", "[", "t", "]"}]}]}]}], ",", 
+   RowBox[{
+    RowBox[{
+     SuperscriptBox["s", "\[Prime]",
+      MultilineFunction->None], "[", "t", "]"}], "\[Equal]", 
+    RowBox[{
+     RowBox[{"0.19`", " ", 
+      RowBox[{"p", "[", "t", "]"}]}], "-", 
+     RowBox[{"0.5`", " ", 
+      RowBox[{"s", "[", "t", "]"}]}]}]}], ",", 
+   RowBox[{
+    RowBox[{"p", "[", "0", "]"}], "\[Equal]", "0.5`"}], ",", 
+   RowBox[{
+    RowBox[{"s", "[", "0", "]"}], "\[Equal]", "0"}], ",", "p", ",", "s", ",", 
+   "t", ",", "720"}], "}"}]], "Output"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"sol", "=", 
+   RowBox[{"NDSolve", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{
+        RowBox[{
+         SuperscriptBox["p", "\[Prime]",
+          MultilineFunction->None], "[", "t", "]"}], "\[Equal]", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"-", 
+           RowBox[{"(", 
+            RowBox[{
+             SubscriptBox["k", "12"], "+", 
+             SubscriptBox["k", "e"]}], ")"}]}], " ", 
+          RowBox[{"p", "[", "t", "]"}]}], "+", 
+         RowBox[{
+          SubscriptBox["k", "21"], " ", 
+          RowBox[{"s", "[", "t", "]"}]}]}]}], ",", 
+       RowBox[{
+        RowBox[{
+         SuperscriptBox["s", "\[Prime]",
+          MultilineFunction->None], "[", "t", "]"}], "==", 
+        RowBox[{
+         RowBox[{
+          SubscriptBox["k", "12"], " ", 
+          RowBox[{"p", "[", "t", "]"}]}], "-", 
+         RowBox[{
+          SubscriptBox["k", "21"], " ", 
+          RowBox[{"s", "[", "t", "]"}]}]}]}], ",", 
+       RowBox[{
+        RowBox[{"p", "[", "0", "]"}], "\[Equal]", 
+        SubscriptBox["p", "0"]}], ",", 
+       RowBox[{
+        RowBox[{"s", "[", "0", "]"}], "\[Equal]", "0"}]}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"p", ",", "s"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"t", ",", "720"}], "}"}]}], "]"}]}], ";"}]], "Input"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Plot", "[", 
+  RowBox[{
+   RowBox[{"Evaluate", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"p", "[", "t", "]"}], ",", 
+       RowBox[{"s", "[", "t", "]"}]}], "}"}], "/.", "\[InvisibleSpace]", 
+     "sol"}], "]"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"t", ",", "0", ",", 
+     RowBox[{"Input", "[", "\"\<length of experiment in hours\>\"", "]"}]}], 
+    "}"}], ",", 
+   RowBox[{"PlotRange", "\[Rule]", 
+    RowBox[{"{", 
+     RowBox[{"0", ",", 
+      SubscriptBox["p", "0"]}], "}"}]}], ",", 
+   RowBox[{"PlotLabel", "\[Rule]", "\"\<\!\(\*
+StyleBox[\"Distribution\", \"Text\",
+CellFrame->True,
+FontFamily->\"Trebuchet MS\",
+FontSize->16,
+FontVariations->{\"CompatibilityType\"->0},
+FontColor->RGBColor[0.2, 0, 0.2],
+Background->GrayLevel[0.900008]]\)\!\(\*
+StyleBox[\" \", \"Text\",
+CellFrame->True,
+FontFamily->\"Trebuchet MS\",
+FontSize->16,
+FontVariations->{\"CompatibilityType\"->0},
+FontColor->RGBColor[0.2, 0, 0.2],
+Background->GrayLevel[0.900008]]\)\!\(\*
+StyleBox[\"Profile\", \"Text\",
+CellFrame->True,
+FontFamily->\"Trebuchet MS\",
+FontSize->16,
+FontVariations->{\"CompatibilityType\"->0},
+FontColor->RGBColor[0.2, 0, 0.2],
+Background->GrayLevel[0.900008]]\)\>\""}], ",", 
+   RowBox[{"Frame", "\[Rule]", "True"}], ",", 
+   RowBox[{"FrameLabel", "\[Rule]", 
+    RowBox[{"{", 
+     StyleBox[
+      RowBox[{"Time", ",", 
+       RowBox[{"Amount", " ", "Drug"}]}],
+      FontFamily->"Trebuchet MS",
+      FontColor->RGBColor[1, 0, 1]], "}"}]}], ",", 
+   RowBox[{"FrameStyle", "\[Rule]", 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{"RGBColor", "[", 
+        RowBox[{"1", ",", "0", ",", "0"}], "]"}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{"RGBColor", "[", 
+        RowBox[{"0", ",", "0", ",", "1"}], "]"}], "}"}]}], "}"}]}]}], 
+  "]"}]], "Input",
+ ImageRegion->{{0, 1}, {0, 1}}],
+
+Cell[GraphicsData["PostScript", "\<\
+%!
+%%Creator: Mathematica
+%%AspectRatio: .61803 
+MathPictureStart
+/Mabs {
+Mgmatrix idtransform
+Mtmatrix dtransform
+} bind def
+/Mabsadd { Mabs
+3 -1 roll add
+3 1 roll add
+exch } bind def
+%% Graphics
+%%IncludeResource: font Courier
+%%IncludeFont: Courier
+/Courier findfont 10  scalefont  setfont
+% Scaling calculations
+0.0238095 0.031746 0 1.23607 [
+[.02381 -0.0125 -3 -9 ]
+[.02381 -0.0125 3 0 ]
+[.18254 -0.0125 -3 -9 ]
+[.18254 -0.0125 3 0 ]
+[.34127 -0.0125 -6 -9 ]
+[.34127 -0.0125 6 0 ]
+[.5 -0.0125 -6 -9 ]
+[.5 -0.0125 6 0 ]
+[.65873 -0.0125 -6 -9 ]
+[.65873 -0.0125 6 0 ]
+[.81746 -0.0125 -6 -9 ]
+[.81746 -0.0125 6 0 ]
+[.97619 -0.0125 -6 -9 ]
+[.97619 -0.0125 6 0 ]
+[ 0 0 -0.125 0 ]
+[.5 -0.0125 -14 -21.5625 ]
+[.5 -0.0125 14 -9 ]
+[-0.0125 .12361 -18 -4.5 ]
+[-0.0125 .12361 0 4.5 ]
+[-0.0125 .24721 -18 -4.5 ]
+[-0.0125 .24721 0 4.5 ]
+[-0.0125 .37082 -18 -4.5 ]
+[-0.0125 .37082 0 4.5 ]
+[-0.0125 .49443 -18 -4.5 ]
+[-0.0125 .49443 0 4.5 ]
+[-0.0125 .61803 -18 -4.5 ]
+[-0.0125 .61803 0 4.5 ]
+[ 0 0 -0.125 0 ]
+[-0.01875 .30902 -30.5625 -33.3125 ]
+[-0.01875 .30902 -18 33.3125 ]
+[ 0 .61803 .125 0 ]
+[ 1 0 .125 0 ]
+[.5 .63053 -70.0313 0 ]
+[.5 .63053 70.0313 16.5 ]
+[ 0 0 0 0 ]
+[ 1 .61803 0 0 ]
+] MathScale
+% Start of Graphics
+1 setlinecap
+1 setlinejoin
+newpath
+0 g
+.25 Mabswid
+[ ] 0 setdash
+.02381 0 m
+.02381 .00625 L
+s
+[(0)] .02381 -0.0125 0 1 Mshowa
+.18254 0 m
+.18254 .00625 L
+s
+[(5)] .18254 -0.0125 0 1 Mshowa
+.34127 0 m
+.34127 .00625 L
+s
+[(10)] .34127 -0.0125 0 1 Mshowa
+.5 0 m
+.5 .00625 L
+s
+[(15)] .5 -0.0125 0 1 Mshowa
+.65873 0 m
+.65873 .00625 L
+s
+[(20)] .65873 -0.0125 0 1 Mshowa
+.81746 0 m
+.81746 .00625 L
+s
+[(25)] .81746 -0.0125 0 1 Mshowa
+.97619 0 m
+.97619 .00625 L
+s
+[(30)] .97619 -0.0125 0 1 Mshowa
+.125 Mabswid
+.05556 0 m
+.05556 .00375 L
+s
+.0873 0 m
+.0873 .00375 L
+s
+.11905 0 m
+.11905 .00375 L
+s
+.15079 0 m
+.15079 .00375 L
+s
+.21429 0 m
+.21429 .00375 L
+s
+.24603 0 m
+.24603 .00375 L
+s
+.27778 0 m
+.27778 .00375 L
+s
+.30952 0 m
+.30952 .00375 L
+s
+.37302 0 m
+.37302 .00375 L
+s
+.40476 0 m
+.40476 .00375 L
+s
+.43651 0 m
+.43651 .00375 L
+s
+.46825 0 m
+.46825 .00375 L
+s
+.53175 0 m
+.53175 .00375 L
+s
+.56349 0 m
+.56349 .00375 L
+s
+.59524 0 m
+.59524 .00375 L
+s
+.62698 0 m
+.62698 .00375 L
+s
+.69048 0 m
+.69048 .00375 L
+s
+.72222 0 m
+.72222 .00375 L
+s
+.75397 0 m
+.75397 .00375 L
+s
+.78571 0 m
+.78571 .00375 L
+s
+.84921 0 m
+.84921 .00375 L
+s
+.88095 0 m
+.88095 .00375 L
+s
+.9127 0 m
+.9127 .00375 L
+s
+.94444 0 m
+.94444 .00375 L
+s
+1 0 0 r
+.25 Mabswid
+0 0 m
+1 0 L
+s
+0 g
+gsave
+.5 -0.0125 -75 -25.5625 Mabsadd m
+1 1 Mabs scale
+currentpoint translate
+0 20.5625 translate 1 -1 scale
+/g { setgray} bind def
+/k { setcmykcolor} bind def
+/p { gsave} bind def
+/r { setrgbcolor} bind def
+/w { setlinewidth} bind def
+/C { curveto} bind def
+/F { fill} bind def
+/L { lineto} bind def
+/rL { rlineto} bind def
+/P { grestore} bind def
+/s { stroke} bind def
+/S { show} bind def
+/N {currentpoint 3 -1 roll show moveto} bind def
+/Msf { findfont exch scalefont [1 0 0 -1 0 0 ] makefont setfont} bind def
+/m { moveto} bind def
+/Mr { rmoveto} bind def
+/Mx {currentpoint exch pop moveto} bind def
+/My {currentpoint pop exch moveto} bind def
+/X {0 rmoveto} bind def
+/Y {0 exch rmoveto} bind def
+63.000 12.813 moveto
+%%IncludeResource: font Courier
+%%IncludeFont: Courier
+/Courier findfont 10.000 scalefont
+[1 0 0 -1 0 0 ] makefont setfont
+0.000 0.000 0.000 setrgbcolor
+(Time) show
+1.000 setlinewidth
+grestore
+0 .12361 m
+.00625 .12361 L
+s
+[(0.1)] -0.0125 .12361 1 0 Mshowa
+0 .24721 m
+.00625 .24721 L
+s
+[(0.2)] -0.0125 .24721 1 0 Mshowa
+0 .37082 m
+.00625 .37082 L
+s
+[(0.3)] -0.0125 .37082 1 0 Mshowa
+0 .49443 m
+.00625 .49443 L
+s
+[(0.4)] -0.0125 .49443 1 0 Mshowa
+0 .61803 m
+.00625 .61803 L
+s
+[(0.5)] -0.0125 .61803 1 0 Mshowa
+.125 Mabswid
+0 .02472 m
+.00375 .02472 L
+s
+0 .04944 m
+.00375 .04944 L
+s
+0 .07416 m
+.00375 .07416 L
+s
+0 .09889 m
+.00375 .09889 L
+s
+0 .14833 m
+.00375 .14833 L
+s
+0 .17305 m
+.00375 .17305 L
+s
+0 .19777 m
+.00375 .19777 L
+s
+0 .22249 m
+.00375 .22249 L
+s
+0 .27193 m
+.00375 .27193 L
+s
+0 .29666 m
+.00375 .29666 L
+s
+0 .32138 m
+.00375 .32138 L
+s
+0 .3461 m
+.00375 .3461 L
+s
+0 .39554 m
+.00375 .39554 L
+s
+0 .42026 m
+.00375 .42026 L
+s
+0 .44498 m
+.00375 .44498 L
+s
+0 .46971 m
+.00375 .46971 L
+s
+0 .51915 m
+.00375 .51915 L
+s
+0 .54387 m
+.00375 .54387 L
+s
+0 .56859 m
+.00375 .56859 L
+s
+0 .59331 m
+.00375 .59331 L
+s
+0 0 1 r
+.25 Mabswid
+0 0 m
+0 .61803 L
+s
+0 g
+gsave
+-0.01875 .30902 -118.594 -10.2813 Mabsadd m
+1 1 Mabs scale
+currentpoint translate
+94.3125 10.2813 translate
+90 rotate
+-94.3125 -10.2813 translate
+0 20.5625 translate 1 -1 scale
+/g { setgray} bind def
+/k { setcmykcolor} bind def
+/p { gsave} bind def
+/r { setrgbcolor} bind def
+/w { setlinewidth} bind def
+/C { curveto} bind def
+/F { fill} bind def
+/L { lineto} bind def
+/rL { rlineto} bind def
+/P { grestore} bind def
+/s { stroke} bind def
+/S { show} bind def
+/N {currentpoint 3 -1 roll show moveto} bind def
+/Msf { findfont exch scalefont [1 0 0 -1 0 0 ] makefont setfont} bind def
+/m { moveto} bind def
+/Mr { rmoveto} bind def
+/Mx {currentpoint exch pop moveto} bind def
+/My {currentpoint pop exch moveto} bind def
+/X {0 rmoveto} bind def
+/Y {0 exch rmoveto} bind def
+63.000 12.813 moveto
+%%IncludeResource: font Courier
+%%IncludeFont: Courier
+/Courier findfont 10.000 scalefont
+[1 0 0 -1 0 0 ] makefont setfont
+0.000 0.000 0.000 setrgbcolor
+(Amount) show
+101.625 12.813 moveto
+(Drug) show
+1.000 setlinewidth
+grestore
+.02381 .61178 m
+.02381 .61803 L
+s
+.18254 .61178 m
+.18254 .61803 L
+s
+.34127 .61178 m
+.34127 .61803 L
+s
+.5 .61178 m
+.5 .61803 L
+s
+.65873 .61178 m
+.65873 .61803 L
+s
+.81746 .61178 m
+.81746 .61803 L
+s
+.97619 .61178 m
+.97619 .61803 L
+s
+.125 Mabswid
+.05556 .61428 m
+.05556 .61803 L
+s
+.0873 .61428 m
+.0873 .61803 L
+s
+.11905 .61428 m
+.11905 .61803 L
+s
+.15079 .61428 m
+.15079 .61803 L
+s
+.21429 .61428 m
+.21429 .61803 L
+s
+.24603 .61428 m
+.24603 .61803 L
+s
+.27778 .61428 m
+.27778 .61803 L
+s
+.30952 .61428 m
+.30952 .61803 L
+s
+.37302 .61428 m
+.37302 .61803 L
+s
+.40476 .61428 m
+.40476 .61803 L
+s
+.43651 .61428 m
+.43651 .61803 L
+s
+.46825 .61428 m
+.46825 .61803 L
+s
+.53175 .61428 m
+.53175 .61803 L
+s
+.56349 .61428 m
+.56349 .61803 L
+s
+.59524 .61428 m
+.59524 .61803 L
+s
+.62698 .61428 m
+.62698 .61803 L
+s
+.69048 .61428 m
+.69048 .61803 L
+s
+.72222 .61428 m
+.72222 .61803 L
+s
+.75397 .61428 m
+.75397 .61803 L
+s
+.78571 .61428 m
+.78571 .61803 L
+s
+.84921 .61428 m
+.84921 .61803 L
+s
+.88095 .61428 m
+.88095 .61803 L
+s
+.9127 .61428 m
+.9127 .61803 L
+s
+.94444 .61428 m
+.94444 .61803 L
+s
+1 0 0 r
+.25 Mabswid
+0 .61803 m
+1 .61803 L
+s
+0 g
+.99375 0 m
+1 0 L
+s
+.99375 .12361 m
+1 .12361 L
+s
+.99375 .24721 m
+1 .24721 L
+s
+.99375 .37082 m
+1 .37082 L
+s
+.99375 .49443 m
+1 .49443 L
+s
+.125 Mabswid
+.99625 .02472 m
+1 .02472 L
+s
+.99625 .04944 m
+1 .04944 L
+s
+.99625 .07416 m
+1 .07416 L
+s
+.99625 .09889 m
+1 .09889 L
+s
+.99625 .14833 m
+1 .14833 L
+s
+.99625 .17305 m
+1 .17305 L
+s
+.99625 .19777 m
+1 .19777 L
+s
+.99625 .22249 m
+1 .22249 L
+s
+.99625 .27193 m
+1 .27193 L
+s
+.99625 .29666 m
+1 .29666 L
+s
+.99625 .32138 m
+1 .32138 L
+s
+.99625 .3461 m
+1 .3461 L
+s
+.99625 .39554 m
+1 .39554 L
+s
+.99625 .42026 m
+1 .42026 L
+s
+.99625 .44498 m
+1 .44498 L
+s
+.99625 .46971 m
+1 .46971 L
+s
+.99625 .51915 m
+1 .51915 L
+s
+.99625 .54387 m
+1 .54387 L
+s
+.99625 .56859 m
+1 .56859 L
+s
+.99625 .59331 m
+1 .59331 L
+s
+0 0 1 r
+.25 Mabswid
+1 0 m
+1 .61803 L
+s
+0 g
+gsave
+.5 .63053 -131.031 -4 Mabsadd m
+1 1 Mabs scale
+currentpoint translate
+0 24.5 translate 1 -1 scale
+/g { setgray} bind def
+/k { setcmykcolor} bind def
+/p { gsave} bind def
+/r { setrgbcolor} bind def
+/w { setlinewidth} bind def
+/C { curveto} bind def
+/F { fill} bind def
+/L { lineto} bind def
+/rL { rlineto} bind def
+/P { grestore} bind def
+/s { stroke} bind def
+/S { show} bind def
+/N {currentpoint 3 -1 roll show moveto} bind def
+/Msf { findfont exch scalefont [1 0 0 -1 0 0 ] makefont setfont} bind def
+/m { moveto} bind def
+/Mr { rmoveto} bind def
+/Mx {currentpoint exch pop moveto} bind def
+/My {currentpoint pop exch moveto} bind def
+/X {0 rmoveto} bind def
+/Y {0 exch rmoveto} bind def
+63.000 16.750 moveto
+%%IncludeResource: font Courier
+%%IncludeFont: Courier
+/Courier findfont 10.000 scalefont
+[1 0 0 -1 0 0 ] makefont setfont
+0.000 0.000 0.000 setrgbcolor
+0.000 0.000 rmoveto
+0.900 0.900 0.900 setrgbcolor
+newpath
+ 63.000 16.813 moveto
+ 146.813 16.813 lineto
+ 146.813 5.000 lineto
+ 63.000 5.000 lineto
+ 63.000 16.813 lineto
+closepath
+fill
+0.000 0.000 0.000 setrgbcolor
+63.000 16.750 moveto
+%%IncludeResource: font TrebuchetMS
+%%IncludeFont: TrebuchetMS
+/TrebuchetMS findfont 16.000 scalefont
+[1 0 0 -1 0 0 ] makefont setfont
+0.200 0.000 0.200 setrgbcolor
+(Distribution) show
+0.900 0.900 0.900 setrgbcolor
+newpath
+ 146.813 16.813 moveto
+ 151.563 16.813 lineto
+ 151.563 16.750 lineto
+ 146.813 16.750 lineto
+ 146.813 16.813 lineto
+closepath
+fill
+0.000 0.000 0.000 setrgbcolor
+0.900 0.900 0.900 setrgbcolor
+newpath
+ 151.563 16.813 moveto
+ 199.063 16.813 lineto
+ 199.063 5.000 lineto
+ 151.563 5.000 lineto
+ 151.563 16.813 lineto
+closepath
+fill
+0.000 0.000 0.000 setrgbcolor
+151.563 16.750 moveto
+(Profile) show
+199.063 16.750 moveto
+%%IncludeResource: font Courier
+%%IncludeFont: Courier
+/Courier findfont 10.000 scalefont
+[1 0 0 -1 0 0 ] makefont setfont
+0.000 0.000 0.000 setrgbcolor
+0.000 0.000 rmoveto
+1.000 setlinewidth
+grestore
+0 0 m
+1 0 L
+1 .61803 L
+0 .61803 L
+closepath
+clip
+newpath
+.5 Mabswid
+.02381 .61803 m
+.03279 .55559 L
+.04262 .49856 L
+.06244 .41067 L
+.07298 .37488 L
+.08426 .34275 L
+.10458 .29674 L
+.12589 .25998 L
+.14603 .23239 L
+.18444 .19188 L
+.22531 .15934 L
+.26466 .13436 L
+.30249 .11445 L
+.34278 .09666 L
+.38155 .08222 L
+.42278 .06925 L
+.46248 .05871 L
+.50068 .05009 L
+.54132 .0423 L
+.58045 .03596 L
+.62203 .03025 L
+.6621 .02561 L
+.70065 .02182 L
+.74165 .0184 L
+.78114 .01562 L
+.81911 .01334 L
+.85954 .01128 L
+.89845 .00959 L
+.93981 .00808 L
+.97619 .00694 L
+s
+.02381 0 m
+.03279 .02931 L
+.04262 .05375 L
+.05288 .07253 L
+.06244 .08518 L
+.06792 .09072 L
+.0731 .09501 L
+.07781 .09819 L
+.0828 .10092 L
+.08823 .10322 L
+.09324 .1048 L
+.09584 .10545 L
+.09864 .10601 L
+.10171 .10649 L
+.10321 .10667 L
+.10458 .10681 L
+.1058 .10692 L
+.10712 .10701 L
+.10784 .10705 L
+.10851 .10708 L
+.10982 .10713 L
+.11095 .10715 L
+.11219 .10717 L
+.11348 .10716 L
+.11468 .10714 L
+.11537 .10712 L
+.11611 .1071 L
+.11747 .10704 L
+.12001 .10689 L
+.12297 .10663 L
+.12571 .10634 L
+.13546 .10488 L
+.1458 .10278 L
+.18355 .09243 L
+.22376 .08012 L
+.26245 .06894 L
+.30359 .0584 L
+.34321 .04965 L
+.38132 .04242 L
+.42188 .03586 L
+.46092 .03049 L
+.50242 .02567 L
+.5424 .02174 L
+.58087 .01853 L
+.62179 .01563 L
+.66119 .01327 L
+.69908 .01134 L
+.73942 .00959 L
+.77824 .00816 L
+.81952 .00687 L
+Mistroke
+.85928 .00583 L
+.89753 .00497 L
+.93822 .0042 L
+.97619 .00358 L
+Mfstroke
+% End of Graphics
+MathPictureEnd
+\
+\>"], "Graphics",
+ ImageSize->{645.75, 399.063},
+ ImageMargins->{{43, 0}, {0, 0}},
+ ImageRegion->{{0, 1}, {0, 1}},
+ ImageCache->GraphicsData["CompressedBitmap", "\<\
+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
+1Jm+1NEsr9ZyjPs/o1ubbA==\
+\>"],
+ ImageRangeCache->{{{0, 644.75}, {398.063, 0}} -> {-4.29026, -0.0412747, \
+0.0562657, 0.00144507}}],
+
+Cell[BoxData[
+ TagBox[
+  RowBox[{"\[SkeletonIndicator]", "Graphics", "\[SkeletonIndicator]"}],
+  False,
+  Editable->False]], "Output"]
+}, Open  ]]
+},
+ScreenStyleEnvironment->"Working",
+PrintingStyleEnvironment->"Presentation",
+WindowToolbars->{},
+CellGrouping->Manual,
+WindowSize->{1272, 922},
+WindowMargins->{{0, Automatic}, {Automatic, 0}},
+DockedCells->FEPrivate`FrontEndResource[
+ "FEExpressions", "CompatibilityToolbar"],
+PrivateNotebookOptions->{"ColorPalette"->{RGBColor, -1}},
+ShowCellLabel->True,
+ShowCellTags->False,
+RenderingOptions->{"ObjectDithering"->True,
+"RasterDithering"->False},
+FrontEndVersion->"7.0 for Mac OS X x86 (32-bit) (February 18, 2009)",
+StyleDefinitions->"Default.nb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[545, 20, 183, 6, 39, "Input"],
+Cell[731, 28, 10385, 297, 363, "Input",
+ Evaluatable->False],
+Cell[11119, 327, 305, 8, 27, "Input"],
+Cell[11427, 337, 368, 10, 27, "Input"],
+Cell[11798, 349, 238, 8, 29, "Input"],
+Cell[12039, 359, 211, 7, 29, "Input"],
+Cell[12253, 368, 258, 9, 29, "Input"],
+Cell[CellGroupData[{
+Cell[12536, 381, 251, 10, 29, "Input"],
+Cell[12790, 393, 46, 0, 27, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[12873, 398, 3179, 87, 29, "Input"],
+Cell[16055, 487, 834, 26, 27, "Output"],
+Cell[16892, 515, 1337, 41, 29, "Input"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[18266, 561, 1860, 58, 54, "Input"],
+Cell[20129, 621, 15014, 765, 408, 10647, 690, "GraphicsData", "PostScript", \
+"Graphics"],
+Cell[35146, 1388, 134, 4, 29, "Output"]
+}, Open  ]]
+}
+]
+*)
+
+(* End of internal cache information *)
+

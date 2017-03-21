@@ -1,0 +1,1991 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 8.0' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       157,          7]
+NotebookDataLength[     48203,       1981]
+NotebookOptionsPosition[     45941,       1914]
+NotebookOutlinePosition[     46385,       1932]
+CellTagsIndexPosition[     46342,       1929]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+
+Cell[CellGroupData[{
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", " ", 
+   RowBox[{
+   "Modeling", " ", "of", " ", "CPA", " ", "Loading", " ", "in", " ", 
+    "Single", " ", "Cells"}], "  ", "*)"}], "\n", 
+  RowBox[{"(*", " ", 
+   RowBox[{
+   "This", " ", "Mathematica", " ", "notebook", " ", "is", " ", "designed", 
+    " ", "to"}], " ", "*)"}], "\n", 
+  RowBox[{"(*", " ", 
+   RowBox[{
+   "predict", " ", "the", " ", "volume", " ", "excursion", " ", "of", " ", 
+    "a", " ", "single"}], " ", "*)"}], "\n", 
+  RowBox[{"(*", " ", 
+   RowBox[{
+   "cell", " ", "due", " ", "to", " ", "a", " ", "sudden", " ", "increase", 
+    " ", "or", " ", "decrease"}], " ", "*)"}], "\n", 
+  RowBox[{"(*", " ", 
+   RowBox[{
+   "in", " ", "extracellular", " ", "osmolarity", " ", "during", " ", "CPA"}],
+    " ", "*)"}], "\n", 
+  RowBox[{"(*", " ", 
+   RowBox[{"loading", " ", "or", " ", 
+    RowBox[{"unloading", "."}]}], "  ", "*)"}], "\n", "\n", 
+  RowBox[{"(*", " ", 
+   RowBox[{
+   "Both", " ", "cell", " ", "volume", " ", "and", " ", "intracellular", " ", 
+    "moles"}], " ", "*)"}], "\n", 
+  RowBox[{"(*", " ", 
+   RowBox[{
+   "of", " ", "CPA", " ", "are", " ", "determined", " ", "simultaneously", 
+    " ", "by"}], " ", "*)"}], "\n", 
+  RowBox[{"(*", " ", 
+   RowBox[{
+    RowBox[{
+    "solving", " ", "a", " ", "form", " ", "of", " ", "the", " ", "Kedem"}], 
+    "-", "Katchalsky"}], " ", "*)"}], "\n", 
+  RowBox[{"(*", " ", 
+   RowBox[{"equations", "."}], "  ", "*)"}], "\n", "\n", 
+  RowBox[{"(*", " ", 
+   RowBox[{
+   "Further", " ", "documentation", " ", "is", " ", "available", " ", "for"}],
+    " ", "*)"}], "\n", 
+  RowBox[{"(*", " ", 
+   RowBox[{"this", " ", "notebook", " ", 
+    RowBox[{"at", ":"}]}], "  ", "*)"}], "\n", 
+  RowBox[{"(*", " ", 
+   RowBox[{
+    RowBox[{"http", ":"}], "//", 
+    RowBox[{
+     RowBox[{
+      RowBox[{
+       RowBox[{"www", ".", "me", ".", "umn", ".", "edu"}], "/", "groups"}], 
+      "/", "bhmt"}], "/"}]}], "      ", "*)"}], "\n", 
+  RowBox[{"(*", "         ", 
+   RowBox[{
+    RowBox[{"tutorial", "/", "CPAload"}], "/"}], "              ", "*)"}], 
+  "\n", "\n", "\n", 
+  RowBox[{"(*", " ", 
+   RowBox[{
+    RowBox[{
+    "The", " ", "following", " ", "lines", " ", "contain", " ", "input", " ", 
+     "para"}], "-"}], " ", "*)"}], "\n", 
+  RowBox[{"(*", " ", 
+   RowBox[{
+    RowBox[{"meters", " ", "for", " ", "cell", " ", "geometry"}], ",", " ", 
+    RowBox[{
+     RowBox[{"membrane", " ", "trans"}], "-"}]}], " ", "*)"}], "\n", 
+  RowBox[{"(*", " ", 
+   RowBox[{
+    RowBox[{"port", " ", "properties"}], ",", " ", 
+    RowBox[{"and", " ", "CPA", " ", "properties"}]}], " ", "*)"}], "\n", "\n", 
+  RowBox[{"(*", " ", 
+   RowBox[{"Cell", " ", "diameter", " ", 
+    RowBox[{"(", "meters", ")"}]}], "   ", "*)"}], "\n", 
+  RowBox[{
+   RowBox[{"d", "=", 
+    RowBox[{
+     RowBox[{"21.2", "*", 
+      RowBox[{"(", 
+       RowBox[{"10", "^", 
+        RowBox[{"-", "6"}]}], ")"}]}], "\n", "\t", "\n", 
+     RowBox[{"(*", " ", 
+      RowBox[{"Initial", " ", "CPA", " ", "molarity", " ", 
+       RowBox[{"(", 
+        RowBox[{"moles", "/", "liter"}], ")"}]}], "   ", "*)"}]}]}], "\n", 
+   RowBox[{
+    RowBox[{"moli", "=", "0"}], "\n", "\n"}], 
+   RowBox[{"(*", " ", 
+    RowBox[{"Final", " ", "CPA", " ", "molarity", " ", 
+     RowBox[{"(", 
+      RowBox[{"moles", "/", "liter"}], ")"}]}], "   ", "*)"}], "\n", 
+   RowBox[{
+    RowBox[{"molf", "=", ".9"}], "\n", "\n"}], 
+   RowBox[{"(*", " ", 
+    RowBox[{"Ambient", " ", "Temperature", " ", 
+     RowBox[{"(", 
+      RowBox[{"degrees", " ", "Kelvin"}], ")"}]}], " ", "*)"}], "\n", 
+   RowBox[{
+    RowBox[{"temp", "=", "298"}], "\n", "\n", 
+    RowBox[{"(*", " ", 
+     RowBox[{
+     "Normalized", " ", "osmotically", " ", "inactive", " ", "volume"}], " ", 
+     "*)"}], "\n"}], 
+   RowBox[{"(*", " ", 
+    RowBox[{"of", " ", "cell", " ", 
+     RowBox[{"(", "unitless", ")"}]}], " ", "*)"}], "\n", 
+   RowBox[{
+    RowBox[{"vb", "=", ".4"}], "\n", "\n", 
+    RowBox[{"(*", " ", 
+     RowBox[{
+      RowBox[{"Reflection", " ", "coefficient", " ", "in", " ", "Kedem"}], 
+      "-", "Katchalsky"}], " ", "*)"}], "\n"}], 
+   RowBox[{"(*", " ", 
+    RowBox[{"equations", " ", 
+     RowBox[{"(", "unitless", ")"}]}], " ", "*)"}], "\n", 
+   RowBox[{
+    RowBox[{"sig", "=", ".75"}], "\n", "\n", 
+    RowBox[{"(*", " ", 
+     RowBox[{"Cell", " ", "membrane", " ", "hydraulic", " ", "permeability"}],
+      "  ", "*)"}], "\n"}], 
+   RowBox[{"(*", " ", 
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{"cubic", " ", 
+       RowBox[{"meters", "/", "Newton"}]}], "-", "sec"}], ")"}], "  ", "*)"}],
+    "\n", 
+   RowBox[{"lp", "=", 
+    RowBox[{
+     RowBox[{"5", "*", 
+      RowBox[{"(", 
+       RowBox[{"10", "^", 
+        RowBox[{"-", "13"}]}], ")"}]}], "\n", "\t", "\n", 
+     RowBox[{"(*", " ", 
+      RowBox[{"Cell", " ", "membrane", " ", "CPA", " ", "permeability"}], 
+      "      ", "*)"}], "\n", 
+     RowBox[{"(*", " ", 
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{"moles", "/", "Newton"}], "-", "sec"}], ")"}], "  ", 
+      "*)"}]}]}], "\n", 
+   RowBox[{"w", "=", 
+    RowBox[{
+     RowBox[{"2", "*", 
+      RowBox[{"(", 
+       RowBox[{"10", "^", 
+        RowBox[{"-", "11"}]}], ")"}]}], "\n", "\t", "\n", 
+     RowBox[{"(*", " ", 
+      RowBox[{"Molar", " ", "volume", " ", "of", " ", "CPA", " ", 
+       RowBox[{"(", 
+        RowBox[{"cubic", " ", 
+         RowBox[{"meters", "/", "mole"}]}], ")"}]}], " ", "*)"}]}]}], "\n", 
+   RowBox[{"vcpa", "=", 
+    RowBox[{
+     RowBox[{"71.28", "*", 
+      RowBox[{"10", "^", 
+       RowBox[{"-", "6"}]}]}], "\n", "\n", 
+     RowBox[{"(*", " ", 
+      RowBox[{
+      "Total", " ", "time", " ", "over", " ", "which", " ", "to", " ", 
+       "perform"}], "  ", "*)"}], "\n", 
+     RowBox[{"(*", " ", 
+      RowBox[{"calculations", " ", 
+       RowBox[{"(", "seconds", ")"}]}], "  ", "*)"}]}]}], "\n", 
+   RowBox[{
+    RowBox[{"totaltime", "=", "1000"}], "\n", "\n", 
+    RowBox[{"(*", " ", 
+     RowBox[{"Other", " ", "constants"}], " ", "*)"}], "\n", "\n"}], 
+   RowBox[{"(*", " ", 
+    RowBox[{"Universal", " ", "gas", " ", "constant", " ", 
+     RowBox[{"(", 
+      RowBox[{
+       RowBox[{"calories", "/", "mole"}], "-", "K"}], ")"}]}], " ", "*)"}], 
+   "\n", 
+   RowBox[{
+    RowBox[{"r", "=", "1.986"}], "\n", "\n"}], 
+   RowBox[{"(*", " ", 
+    RowBox[{"Universal", " ", "gas", " ", "constant", " ", 
+     RowBox[{"(", 
+      RowBox[{
+       RowBox[{"Joules", "/", "mole"}], "-", "K"}], ")"}]}], " ", "*)"}], 
+   "\n", 
+   RowBox[{
+    RowBox[{"r2", "=", "8.314"}], "\n", "\n"}], 
+   RowBox[{"(*", " ", 
+    RowBox[{"Molar", " ", "volume", " ", "of", " ", "water", " ", 
+     RowBox[{"(", 
+      RowBox[{"cubic", " ", 
+       RowBox[{"meters", "/", "mole"}]}], ")"}]}], "  ", "*)"}], "\n", 
+   RowBox[{"vw", "=", 
+    RowBox[{
+     RowBox[{"18.8", "*", 
+      RowBox[{"10", "^", 
+       RowBox[{"-", "6"}]}]}], "\n", "\n", 
+     RowBox[{"(*", " ", 
+      RowBox[{"Molar", " ", "volume", " ", "of", " ", "salt", " ", 
+       RowBox[{"(", 
+        RowBox[{"cubic", " ", 
+         RowBox[{"meters", "/", "mole"}]}], ")"}]}], " ", "*)"}]}]}], "\n", 
+   RowBox[{"vs", "=", 
+    RowBox[{
+     RowBox[{"27", "*", 
+      RowBox[{"10", "^", 
+       RowBox[{"-", "6"}]}]}], "\n", "\n", 
+     RowBox[{"(*", " ", 
+      RowBox[{
+      "The", " ", "following", " ", "lines", " ", "determine", " ", "the", 
+       " ", "initial"}], " ", "*)"}], "\n", 
+     RowBox[{"(*", " ", 
+      RowBox[{
+      "volume", " ", "of", " ", "the", " ", "cell", " ", "and", " ", 
+       "intracellular", " ", "and"}], " ", "*)"}], "\n", 
+     RowBox[{"(*", " ", 
+      RowBox[{
+      "extracellular", " ", "amounts", " ", "of", " ", "CPA", " ", "and", " ",
+        "salt"}], " ", "*)"}]}]}], "\n", 
+   RowBox[{"moli", "=", 
+    RowBox[{"moli", "*", "1000"}]}], "\n", 
+   RowBox[{"molf", "=", 
+    RowBox[{"molf", "*", "1000"}]}], "\n", 
+   RowBox[{"vo", "=", 
+    RowBox[{
+     RowBox[{"(", 
+      RowBox[{"4", "/", "3"}], ")"}], "*", "3.1415927", "*", 
+     RowBox[{
+      RowBox[{"(", 
+       RowBox[{"d", "/", "2"}], ")"}], "^", "3"}]}]}], "\n", 
+   RowBox[{"vb", "=", 
+    RowBox[{"vb", " ", "vo"}]}], "\n", 
+   RowBox[{"ns", "=", 
+    RowBox[{"285", "*", 
+     RowBox[{"(", 
+      RowBox[{"vo", "-", "vb"}], ")"}]}]}], "\n", 
+   RowBox[{"cs2", "=", "285"}], "\n", 
+   RowBox[{"ncpai", "=", " ", 
+    RowBox[{"moli", "*", 
+     RowBox[{"(", 
+      RowBox[{"vo", "-", "vb"}], ")"}]}]}], "\n", 
+   RowBox[{"ncpao", "=", 
+    RowBox[{"molf", "*", 
+     RowBox[{"(", 
+      RowBox[{"vo", "-", "vb"}], ")"}]}]}], "\n", 
+   RowBox[{"cc2", "=", "molf"}], "\n", 
+   RowBox[{"tr", "=", "273.15"}], "\n", "\n", 
+   RowBox[{"(*", " ", 
+    RowBox[{
+    "Define", " ", "functions", " ", "for", " ", "intracellular", " ", 
+     "salt"}], " ", "*)"}], "\[IndentingNewLine]", 
+   RowBox[{"(*", " ", 
+    RowBox[{
+    "and", " ", "CPA", " ", "concentrations", " ", "to", " ", "be", " ", 
+     "used", " ", "in"}], "    ", "*)"}], "\n", 
+   RowBox[{"(*", " ", 
+    RowBox[{
+    "calculating", " ", "water", " ", "and", " ", "CPA", " ", "fluxes"}], 
+    "   ", "*)"}], "\n", 
+   RowBox[{
+    RowBox[{"cs1", "[", "v_", "]"}], ":=", 
+    RowBox[{"ns", "/", 
+     RowBox[{"(", 
+      RowBox[{"v", "-", "vb"}], ")"}]}]}], "\n", 
+   RowBox[{
+    RowBox[{"cc1", "[", 
+     RowBox[{"ncpa_", ",", "v_"}], "]"}], ":=", 
+    RowBox[{"ncpa", "/", 
+     RowBox[{"(", 
+      RowBox[{"v", "-", "vb"}], ")"}]}]}], "\n", "\n", 
+   RowBox[{"(*", " ", 
+    RowBox[{
+    "Define", " ", "functions", " ", "for", " ", "water", " ", "and", " ", 
+     "CPA"}], "      ", "*)"}], "\n", 
+   RowBox[{"(*", " ", 
+    RowBox[{
+    "fluxes", " ", "to", " ", "be", " ", "used", " ", "during", " ", 
+     "calculation", " ", "of"}], " ", "*)"}], "\[IndentingNewLine]", 
+   RowBox[{"(*", " ", 
+    RowBox[{
+    "transient", " ", "changes", " ", "in", " ", "cell", " ", "volume", " ", 
+     "and"}], "    ", "*)"}], "\n", 
+   RowBox[{"(*", " ", 
+    RowBox[{
+    "intracellular", " ", "moles", " ", "of", " ", "CPA", " ", "by", " ", 
+     "NDSolve"}], "   ", "*)"}], "\n", 
+   RowBox[{"(*", " ", 
+    RowBox[{"function", "."}], "       ", "*)"}], "\n", "\n", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"jw", "[", 
+      RowBox[{"cs1_", ",", "cc1_"}], "]"}], ":=", 
+     RowBox[{
+      RowBox[{"-", "lp"}], " ", "r2", " ", 
+      RowBox[{"(", "temp", ")"}], " ", 
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{"cs1", "-", "cs2"}], ")"}], "+", 
+        RowBox[{"sig", "*", 
+         RowBox[{"(", 
+          RowBox[{"cc1", "-", "cc2"}], ")"}]}]}], ")"}]}]}], ";"}], 
+   "\[IndentingNewLine]", "\n", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"jcpa", "[", 
+      RowBox[{"jw_", ",", "cs1_", ",", "cc1_"}], "]"}], ":=", 
+     RowBox[{"vcpa", " ", 
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"(", 
+          RowBox[{
+           RowBox[{"(", 
+            RowBox[{"cc1", "+", "cc2"}], ")"}], "/", "2"}], ")"}], "*", "\n", 
+         "\t\t\t\t", 
+         RowBox[{"(", 
+          RowBox[{"1", "-", "sig"}], ")"}], "*", "jw"}], "+", 
+        RowBox[{"r2", " ", 
+         RowBox[{"(", "temp", ")"}], " ", "w", " ", 
+         RowBox[{"(", 
+          RowBox[{"cc1", "-", "cc2"}], ")"}]}]}], ")"}]}]}], ";"}], "\n", 
+   "\n", 
+   RowBox[{"(*", " ", 
+    RowBox[{
+    "Define", " ", "cell", " ", "volume", " ", "change", " ", "as", " ", 
+     "sum", " ", "of"}], "    ", "*)"}], "\n", 
+   RowBox[{"(*", " ", 
+    RowBox[{
+    "fluxes", " ", "of", " ", "water", " ", "and", " ", "CPA", " ", "out", 
+     " ", "of", " ", "cell"}], "    ", "*)"}], "\n", 
+   RowBox[{
+    RowBox[{"jv", "[", 
+     RowBox[{"jw_", ",", "jcpa_"}], "]"}], ":=", 
+    RowBox[{"jw", "+", "jcpa"}]}], "\n", "\n", 
+   RowBox[{"sol", "=", 
+    RowBox[{"NDSolve", "[", "\n", "\t\t", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{
+         RowBox[{
+          RowBox[{"v", "'"}], "[", "t", "]"}], "==", 
+         RowBox[{
+          RowBox[{"-", "1"}], "*", 
+          RowBox[{"jv", "[", 
+           RowBox[{
+            RowBox[{"jw", "[", 
+             RowBox[{
+              RowBox[{"cs1", "[", 
+               RowBox[{"v", "[", "t", "]"}], "]"}], ",", 
+              RowBox[{"cc1", "[", 
+               RowBox[{
+                RowBox[{"ncpa", "[", "t", "]"}], ",", 
+                RowBox[{"v", "[", "t", "]"}]}], "]"}]}], "]"}], ",", "\n", 
+            "\t\t\t\t\t\t", 
+            RowBox[{"jcpa", "[", 
+             RowBox[{
+              RowBox[{"jw", "[", 
+               RowBox[{
+                RowBox[{"cs1", "[", 
+                 RowBox[{"v", "[", "t", "]"}], "]"}], ",", 
+                RowBox[{"cc1", "[", 
+                 RowBox[{
+                  RowBox[{"ncpa", "[", "t", "]"}], ",", 
+                  RowBox[{"v", "[", "t", "]"}]}], "]"}]}], "]"}], ",", "\n", 
+              "\t\t\t\t\t\t\t", 
+              RowBox[{"cs1", "[", 
+               RowBox[{"v", "[", "t", "]"}], "]"}], ",", 
+              RowBox[{"cc1", "[", 
+               RowBox[{
+                RowBox[{"ncpa", "[", "t", "]"}], ",", 
+                RowBox[{"v", "[", "t", "]"}]}], "]"}]}], "]"}]}], "]"}], "*", 
+          "\n", "\t\t\t\t\t", "4.83598", "*", 
+          RowBox[{
+           RowBox[{"v", "[", "t", "]"}], "^", ".6667"}]}]}], ",", "\n", 
+        "\t\t\t", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"ncpa", "'"}], "[", "t", "]"}], "==", 
+         RowBox[{
+          RowBox[{"(", 
+           RowBox[{
+            RowBox[{"-", "1"}], "/", "vcpa"}], ")"}], "*", 
+          RowBox[{"jcpa", "[", 
+           RowBox[{
+            RowBox[{"jw", "[", 
+             RowBox[{
+              RowBox[{"cs1", "[", 
+               RowBox[{"v", "[", "t", "]"}], "]"}], ",", "\n", 
+              "\t\t\t\t\t\t\t", 
+              RowBox[{"cc1", "[", 
+               RowBox[{
+                RowBox[{"ncpa", "[", "t", "]"}], ",", 
+                RowBox[{"v", "[", "t", "]"}]}], "]"}]}], "]"}], ",", 
+            RowBox[{"cs1", "[", 
+             RowBox[{"v", "[", "t", "]"}], "]"}], ",", 
+            RowBox[{"cc1", "[", 
+             RowBox[{
+              RowBox[{"ncpa", "[", "t", "]"}], ",", "\n", "\t\t\t\t\t\t\t", 
+              RowBox[{"v", "[", "t", "]"}]}], "]"}]}], "]"}], "*", "4.83598", 
+          "*", 
+          RowBox[{
+           RowBox[{"v", "[", "t", "]"}], "^", ".6667"}]}]}], ",", 
+        RowBox[{
+         RowBox[{"v", "[", "0", "]"}], "==", "vo"}], ",", 
+        RowBox[{
+         RowBox[{"ncpa", "[", "0", "]"}], "==", "ncpai"}]}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{"v", ",", "ncpa"}], "}"}], ",", "\n", "\t\t", 
+      RowBox[{"{", 
+       RowBox[{"t", ",", "0", ",", "totaltime"}], "}"}], ",", "\n", "\t\t", 
+      RowBox[{"MaxStepSize", "->", ".1"}], ",", " ", 
+      RowBox[{"MaxSteps", "->", " ", "100000"}]}], "]"}]}], "\n", 
+   "\n"}]}]], "Input"],
+
+Cell[BoxData["0.000021199999999999997`"], "Output"],
+
+Cell[BoxData["0"], "Output"],
+
+Cell[BoxData["0.9`"], "Output"],
+
+Cell[BoxData["298"], "Output"],
+
+Cell[BoxData["0.4`"], "Output"],
+
+Cell[BoxData["0.75`"], "Output"],
+
+Cell[BoxData[
+ FractionBox["1", "2000000000000"]], "Output"],
+
+Cell[BoxData[
+ FractionBox["1", "50000000000"]], "Output"],
+
+Cell[BoxData["0.00007128`"], "Output"],
+
+Cell[BoxData["1000"], "Output"],
+
+Cell[BoxData["1.986`"], "Output"],
+
+Cell[BoxData["8.314`"], "Output"],
+
+Cell[BoxData["0.0000188`"], "Output"],
+
+Cell[BoxData[
+ FractionBox["27", "1000000"]], "Output"],
+
+Cell[BoxData["0"], "Output"],
+
+Cell[BoxData["900.`"], "Output"],
+
+Cell[BoxData["4.988916228244264`*^-15"], "Output"],
+
+Cell[BoxData["1.995566491297706`*^-15"], "Output"],
+
+Cell[BoxData["8.531046750297692`*^-13"], "Output"],
+
+Cell[BoxData["285"], "Output"],
+
+Cell[BoxData["0"], "Output"],
+
+Cell[BoxData["2.694014763251903`*^-12"], "Output"],
+
+Cell[BoxData["900.`"], "Output"],
+
+Cell[BoxData["273.15`"], "Output"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"{", 
+   RowBox[{
+    RowBox[{"v", "\[Rule]", 
+     TagBox[
+      RowBox[{"InterpolatingFunction", "[", 
+       RowBox[{
+        RowBox[{"{", 
+         RowBox[{"{", 
+          RowBox[{"0.`", ",", "1000.`"}], "}"}], "}"}], ",", "\<\"<>\"\>"}], 
+       "]"}],
+      False,
+      Editable->False]}], ",", 
+    RowBox[{"ncpa", "\[Rule]", 
+     TagBox[
+      RowBox[{"InterpolatingFunction", "[", 
+       RowBox[{
+        RowBox[{"{", 
+         RowBox[{"{", 
+          RowBox[{"0.`", ",", "1000.`"}], "}"}], "}"}], ",", "\<\"<>\"\>"}], 
+       "]"}],
+      False,
+      Editable->False]}]}], "}"}], "}"}]], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", " ", 
+   RowBox[{
+   "The", " ", "following", " ", "commands", " ", "will", " ", "plot", " ", 
+    "the", " ", "results"}], " ", "*)"}], "\n", 
+  RowBox[{"(*", " ", 
+   RowBox[{
+   "for", " ", "normalized", " ", "cell", " ", "volume", " ", "and", " ", 
+    "intracellular"}], " ", "*)"}], "\n", 
+  RowBox[{"(*", " ", 
+   RowBox[{
+    RowBox[{"CPA", " ", 
+     RowBox[{"conc", ".", "  ", "Each"}], " ", "plot", " ", "is", " ", 
+     "assigned", " ", "a", " ", "name"}], ","}], " ", "*)"}], "\n", 
+  RowBox[{"(*", " ", 
+   RowBox[{
+   "which", " ", "the", " ", "user", " ", "may", " ", "feel", " ", "free", 
+    " ", "to", " ", 
+    RowBox[{"change", ".", "  ", "In"}]}], " ", "*)"}], "\n", 
+  RowBox[{"(*", " ", 
+   RowBox[{
+    RowBox[{"this", " ", "way"}], ",", " ", 
+    RowBox[{
+    "plots", " ", "for", " ", "different", " ", "conditions", " ", "can"}]}], 
+   " ", "*)"}], "\n", 
+  RowBox[{"(*", " ", 
+   RowBox[{"be", " ", "given", " ", "different", " ", 
+    RowBox[{"names", ".", "  ", "The"}], " ", "parameters"}], " ", "*)"}], 
+  "\n", 
+  RowBox[{"(*", " ", 
+   RowBox[{
+   "tmin", ",", " ", "tmax", ",", " ", "vmin", ",", " ", "vmax", ",", " ", 
+    RowBox[{"nmin", " ", "and", " ", "nmax", " ", "set", " ", "the"}]}], " ", 
+   "*)"}], "\n", 
+  RowBox[{"(*", " ", 
+   RowBox[{
+    RowBox[{"limits", " ", "on", " ", "the", " ", "t"}], ",", " ", 
+    RowBox[{
+    "v", " ", "and", " ", "ncpa", " ", "axes", " ", "on", " ", "the", " ", 
+     RowBox[{"plots", "."}]}]}], " ", "*)"}], "\n", "\n", 
+  RowBox[{
+   RowBox[{"tmin", "=", "0"}], "\n", 
+   RowBox[{"tmax", "=", "200"}], "\n", 
+   RowBox[{"vmin", "=", "0.5"}], "\n", 
+   RowBox[{"vmax", "=", "1"}], "\n", 
+   RowBox[{"mmin", "=", "0"}], "\n", "\t", 
+   RowBox[{"mmax", "=", "1"}], "\n", "\n", "\n", "\n", 
+   RowBox[{"vol0", "=", 
+    RowBox[{"Plot", "[", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"(", 
+        RowBox[{"1", "/", "vo"}], ")"}], "*", 
+       RowBox[{"Evaluate", "[", 
+        RowBox[{
+         RowBox[{"{", 
+          RowBox[{"v", "[", "t", "]"}], "}"}], "/.", "sol"}], "]"}]}], ",", 
+      "\n", "\t\t", 
+      RowBox[{"{", 
+       RowBox[{"t", ",", "tmin", ",", "tmax"}], "}"}], ",", " ", 
+      RowBox[{"PlotRange", "->", 
+       RowBox[{"{", 
+        RowBox[{"vmin", ",", "vmax"}], "}"}]}]}], "]"}]}], "\n", "\n", 
+   RowBox[{"mol0", "=", 
+    RowBox[{"Plot", "[", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"(", 
+        RowBox[{"1", "/", "molf"}], ")"}], "*", 
+       RowBox[{
+        RowBox[{"Evaluate", "[", 
+         RowBox[{
+          RowBox[{"{", 
+           RowBox[{"ncpa", "[", "t", "]"}], "}"}], "/.", "sol"}], "]"}], "\n",
+         "\t\t", "/", 
+        RowBox[{"(", 
+         RowBox[{
+          RowBox[{"Evaluate", "[", 
+           RowBox[{
+            RowBox[{"{", 
+             RowBox[{"v", "[", "t", "]"}], "}"}], "/.", "sol"}], "]"}], "-", 
+          "vb"}], ")"}]}]}], ",", "\n", "\t\t", 
+      RowBox[{"{", 
+       RowBox[{"t", ",", "tmin", ",", "tmax"}], "}"}], ",", " ", 
+      RowBox[{"PlotRange", "->", 
+       RowBox[{"{", 
+        RowBox[{"mmin", ",", "mmax"}], "}"}]}]}], "]"}]}], "\n"}]}]], "Input"],
+
+Cell[BoxData["0"], "Output"],
+
+Cell[BoxData["200"], "Output"],
+
+Cell[BoxData["0.5`"], "Output"],
+
+Cell[BoxData["1"], "Output"],
+
+Cell[BoxData["0"], "Output"],
+
+Cell[BoxData["1"], "Output"],
+
+Cell[GraphicsData["PostScript", "\<\
+%!
+%%Creator: Mathematica
+%%AspectRatio: .61803 
+MathPictureStart
+/Mabs {
+Mgmatrix idtransform
+Mtmatrix dtransform
+} bind def
+/Mabsadd { Mabs
+3 -1 roll add
+3 1 roll add
+exch } bind def
+%% Graphics
+%%IncludeResource: font Courier
+%%IncludeFont: Courier
+/Courier findfont 10  scalefont  setfont
+% Scaling calculations
+0.0238095 0.0047619 -0.618034 1.23607 [
+[.2619 .60553 -6 -9 ]
+[.2619 .60553 6 0 ]
+[.5 .60553 -9 -9 ]
+[.5 .60553 9 0 ]
+[.7381 .60553 -9 -9 ]
+[.7381 .60553 9 0 ]
+[.97619 .60553 -9 -9 ]
+[.97619 .60553 9 0 ]
+[.01131 0 -18 -4.5 ]
+[.01131 0 0 4.5 ]
+[.01131 .12361 -18 -4.5 ]
+[.01131 .12361 0 4.5 ]
+[.01131 .24721 -18 -4.5 ]
+[.01131 .24721 0 4.5 ]
+[.01131 .37082 -18 -4.5 ]
+[.01131 .37082 0 4.5 ]
+[.01131 .49443 -18 -4.5 ]
+[.01131 .49443 0 4.5 ]
+[ 0 0 0 0 ]
+[ 1 .62428 0 0 ]
+] MathScale
+% Start of Graphics
+1 setlinecap
+1 setlinejoin
+newpath
+0 g
+.25 Mabswid
+[ ] 0 setdash
+.2619 .61803 m
+.2619 .62428 L
+s
+[(50)] .2619 .60553 0 1 Mshowa
+.5 .61803 m
+.5 .62428 L
+s
+[(100)] .5 .60553 0 1 Mshowa
+.7381 .61803 m
+.7381 .62428 L
+s
+[(150)] .7381 .60553 0 1 Mshowa
+.97619 .61803 m
+.97619 .62428 L
+s
+[(200)] .97619 .60553 0 1 Mshowa
+.125 Mabswid
+.07143 .61803 m
+.07143 .62178 L
+s
+.11905 .61803 m
+.11905 .62178 L
+s
+.16667 .61803 m
+.16667 .62178 L
+s
+.21429 .61803 m
+.21429 .62178 L
+s
+.30952 .61803 m
+.30952 .62178 L
+s
+.35714 .61803 m
+.35714 .62178 L
+s
+.40476 .61803 m
+.40476 .62178 L
+s
+.45238 .61803 m
+.45238 .62178 L
+s
+.54762 .61803 m
+.54762 .62178 L
+s
+.59524 .61803 m
+.59524 .62178 L
+s
+.64286 .61803 m
+.64286 .62178 L
+s
+.69048 .61803 m
+.69048 .62178 L
+s
+.78571 .61803 m
+.78571 .62178 L
+s
+.83333 .61803 m
+.83333 .62178 L
+s
+.88095 .61803 m
+.88095 .62178 L
+s
+.92857 .61803 m
+.92857 .62178 L
+s
+.25 Mabswid
+0 .61803 m
+1 .61803 L
+s
+.02381 0 m
+.03006 0 L
+s
+[(0.5)] .01131 0 1 0 Mshowa
+.02381 .12361 m
+.03006 .12361 L
+s
+[(0.6)] .01131 .12361 1 0 Mshowa
+.02381 .24721 m
+.03006 .24721 L
+s
+[(0.7)] .01131 .24721 1 0 Mshowa
+.02381 .37082 m
+.03006 .37082 L
+s
+[(0.8)] .01131 .37082 1 0 Mshowa
+.02381 .49443 m
+.03006 .49443 L
+s
+[(0.9)] .01131 .49443 1 0 Mshowa
+.125 Mabswid
+.02381 .02472 m
+.02756 .02472 L
+s
+.02381 .04944 m
+.02756 .04944 L
+s
+.02381 .07416 m
+.02756 .07416 L
+s
+.02381 .09889 m
+.02756 .09889 L
+s
+.02381 .14833 m
+.02756 .14833 L
+s
+.02381 .17305 m
+.02756 .17305 L
+s
+.02381 .19777 m
+.02756 .19777 L
+s
+.02381 .22249 m
+.02756 .22249 L
+s
+.02381 .27193 m
+.02756 .27193 L
+s
+.02381 .29666 m
+.02756 .29666 L
+s
+.02381 .32138 m
+.02756 .32138 L
+s
+.02381 .3461 m
+.02756 .3461 L
+s
+.02381 .39554 m
+.02756 .39554 L
+s
+.02381 .42026 m
+.02756 .42026 L
+s
+.02381 .44498 m
+.02756 .44498 L
+s
+.02381 .46971 m
+.02756 .46971 L
+s
+.02381 .51915 m
+.02756 .51915 L
+s
+.02381 .54387 m
+.02756 .54387 L
+s
+.02381 .56859 m
+.02756 .56859 L
+s
+.02381 .59331 m
+.02756 .59331 L
+s
+.25 Mabswid
+.02381 0 m
+.02381 .61803 L
+s
+0 0 m
+1 0 L
+1 .61803 L
+0 .61803 L
+closepath
+clip
+newpath
+.5 Mabswid
+.02381 .61803 m
+.02605 .49023 L
+.02846 .37417 L
+.03053 .29188 L
+.03279 .22136 L
+.03416 .18767 L
+.03543 .16265 L
+.03665 .14436 L
+.03793 .12938 L
+.03908 .11928 L
+.04016 .11224 L
+.04135 .10674 L
+.04262 .10281 L
+.04393 .10045 L
+.04516 .09945 L
+.04586 .09925 L
+.0465 .09929 L
+.04723 .09952 L
+.04793 .09991 L
+.04919 .10095 L
+.05035 .1022 L
+.05297 .10567 L
+.06244 .12073 L
+.10458 .1814 L
+.14407 .2265 L
+.18204 .26279 L
+.22246 .29589 L
+.26137 .3236 L
+.30273 .34952 L
+.34258 .37166 L
+.38091 .39076 L
+.42169 .40907 L
+.46096 .42501 L
+.49871 .43896 L
+.53891 .45253 L
+.5776 .46446 L
+.61874 .47607 L
+.65836 .48632 L
+.69647 .49539 L
+.73703 .50429 L
+.77608 .51219 L
+.81757 .51993 L
+.85756 .52681 L
+.89602 .53294 L
+.93694 .53897 L
+.97619 .54433 L
+s
+% End of Graphics
+MathPictureEnd
+\
+\>"], "Graphics",
+ ImageSize->{288, 177.938},
+ ImageMargins->{{43, 0}, {0, 0}},
+ ImageRegion->{{0, 1}, {0, 1}},
+ ImageCache->GraphicsData["CompressedBitmap", "\<\
+eJztmnuIFVUcx+fuzNW7m6nb2x54V8uiNPduilZGIfgilsTAQiq6mbRLibIu
+SFEUSFEURYFEISEhSIiFRAoWgRCCIEih2Yse9qKnPXz0UG97zrl+Z+7Z7+93
+596dRND9Y/zN+X2+3985Z2bOPK7d5f6eJUvL/b2Ly8U5feXlPb2LVxRnL+sb
+aApzQZArBkGwqRiYuDIQVjf2r8Nsqjt14hbzT4vRRrYhrMBlYM9m46Z2pwny
+lWpQATnwN9wG+Zr24zkbjFblZ9Sv39qcgdeWwsoOJUK+SQNPNqyOVXwoCibK
+SwclqTk3i3wL0m0Zup7u9elR1YwqNFEMRrLev2qD1JrIvxIrrmhCxheoUBpG
+zhFp18m8UkO8mJtaUqMTWymMp+k4RMscq18mqjdRbNFN4UvXW16BrcVH1QoF
+otDGwHp0xCXjc6kNkWbFSv/rku6UHnTWtzasaCOKfxKKFnL4meZvtcoIovgr
+Y8WZRHFYVYwkikOqYhRRHBySgs0v0xxQq7QTxZ+q4iyi+CNjxdlE8buqOIco
+fqszW0yzX61yHlH8qirOJ4pfkorae9YFjeFjCP6zjF9I8J9k/CKC/5jAbeZi
+Av0ge15iAnswFGgs8fxOxosE/9Yl9Zswu4X7nCnQQbhvqkm+9rPllDmPI9zX
+qjNbQv1xGG484fY152ybLiXZr1S/NG9XhruMcF+qzvUfcmorTCAVvnDJNK9Q
+xuJyYvG5S7JT8grYKtCVxPPTBG4zVxHoE9lzIsE/lvFJBP9Ixq8m+F4Zn0zw
+D2W8k+B7ZLxE8N3+9HXhQOyWnaYQp/dlfCo8FWgaoF0ydC0pvFPGr4OnAs0g
+njv8abkBTjtkpxuJ03YZvwmeCjQT0HsJyDbMIuW2+dBsRINSc4n+XR+ah2hQ
+6mZE7/ipbkRb/dQtpOoWBzX0Bmi5+YiqFs0ugNZjAaK3huZme3kr3N5U3Qpk
+XAsRbcpgXLcjeiMDt0WINrpkfNhayVDuQLTB4fGpcBei1/zU3YjW+6l7UGSd
+n1qC6FU/dR+itX6qF9Erfup+RGv81FJ04yU/tRzRi36qD9FqP9UPwxf81Eqk
+nkukvOvjQUDPyNDDgJ6SoUcBPeH3ZBVSq2T944Aek6EnAT0iQ08DekiGngW0
+UoaeN1v7trFChlYDWuYP/GUUeUDWr4G+R4bWArpXhtahXNlBKdZGm2WfXdaj
+4p3ObAiPymZvAzq3SPXTf294HdFtqksBvWcjt+ujXbIWqC6NPAKbvc3w7c7U
+922zHWaa5jhMXD3Znd3WmemE7LTZDvcZMrQTTtMSkO3CB9CXZP1e6CfK0Gdw
+miBD++DUIUPfm23BNI2Rof2A2mXoMMqN8Ad+FHN/Mn3Ur5fP5KeM6Rh6fI+f
+QtriqIRsSLgSZjkk2lDuiDsb+aUk/PbAXkQEVGguKUVDzam26OSGiqrNdG6u
+T9+VrozmpNYhn74D7LX0lJwI7dzSOpIzUc5F4kTYqyWKL6n/7dqI/P5rRTub
+HLJ+DtiVYzoZT8S110AkAELNTujkL50naMjsaHuL6lTCsSW3i1Qb7GYpcclX
+lm27PUnuiiMxl6MTvWYfjdmzLvsIzbis2061uu6Z2e2T/zAV5P4DDFU6MA==
+\
+\>"],
+ ImageRangeCache->{{{0, 287}, {176.938, 0}} -> {-16.6539, 0.480156, 0.779335, \
+0.00300235}}],
+
+Cell[BoxData[
+ TagBox[
+  RowBox[{"\[SkeletonIndicator]", "Graphics", "\[SkeletonIndicator]"}],
+  False,
+  Editable->False]], "Output"],
+
+Cell[GraphicsData["PostScript", "\<\
+%!
+%%Creator: Mathematica
+%%AspectRatio: .61803 
+MathPictureStart
+/Mabs {
+Mgmatrix idtransform
+Mtmatrix dtransform
+} bind def
+/Mabsadd { Mabs
+3 -1 roll add
+3 1 roll add
+exch } bind def
+%% Graphics
+%%IncludeResource: font Courier
+%%IncludeFont: Courier
+/Courier findfont 10  scalefont  setfont
+% Scaling calculations
+0.0238095 0.0047619 0 0.618034 [
+[.2619 -0.0125 -6 -9 ]
+[.2619 -0.0125 6 0 ]
+[.5 -0.0125 -9 -9 ]
+[.5 -0.0125 9 0 ]
+[.7381 -0.0125 -9 -9 ]
+[.7381 -0.0125 9 0 ]
+[.97619 -0.0125 -9 -9 ]
+[.97619 -0.0125 9 0 ]
+[.01131 .12361 -18 -4.5 ]
+[.01131 .12361 0 4.5 ]
+[.01131 .24721 -18 -4.5 ]
+[.01131 .24721 0 4.5 ]
+[.01131 .37082 -18 -4.5 ]
+[.01131 .37082 0 4.5 ]
+[.01131 .49443 -18 -4.5 ]
+[.01131 .49443 0 4.5 ]
+[.01131 .61803 -6 -4.5 ]
+[.01131 .61803 0 4.5 ]
+[ 0 0 0 0 ]
+[ 1 .61803 0 0 ]
+] MathScale
+% Start of Graphics
+1 setlinecap
+1 setlinejoin
+newpath
+0 g
+.25 Mabswid
+[ ] 0 setdash
+.2619 0 m
+.2619 .00625 L
+s
+[(50)] .2619 -0.0125 0 1 Mshowa
+.5 0 m
+.5 .00625 L
+s
+[(100)] .5 -0.0125 0 1 Mshowa
+.7381 0 m
+.7381 .00625 L
+s
+[(150)] .7381 -0.0125 0 1 Mshowa
+.97619 0 m
+.97619 .00625 L
+s
+[(200)] .97619 -0.0125 0 1 Mshowa
+.125 Mabswid
+.07143 0 m
+.07143 .00375 L
+s
+.11905 0 m
+.11905 .00375 L
+s
+.16667 0 m
+.16667 .00375 L
+s
+.21429 0 m
+.21429 .00375 L
+s
+.30952 0 m
+.30952 .00375 L
+s
+.35714 0 m
+.35714 .00375 L
+s
+.40476 0 m
+.40476 .00375 L
+s
+.45238 0 m
+.45238 .00375 L
+s
+.54762 0 m
+.54762 .00375 L
+s
+.59524 0 m
+.59524 .00375 L
+s
+.64286 0 m
+.64286 .00375 L
+s
+.69048 0 m
+.69048 .00375 L
+s
+.78571 0 m
+.78571 .00375 L
+s
+.83333 0 m
+.83333 .00375 L
+s
+.88095 0 m
+.88095 .00375 L
+s
+.92857 0 m
+.92857 .00375 L
+s
+.25 Mabswid
+0 0 m
+1 0 L
+s
+.02381 .12361 m
+.03006 .12361 L
+s
+[(0.2)] .01131 .12361 1 0 Mshowa
+.02381 .24721 m
+.03006 .24721 L
+s
+[(0.4)] .01131 .24721 1 0 Mshowa
+.02381 .37082 m
+.03006 .37082 L
+s
+[(0.6)] .01131 .37082 1 0 Mshowa
+.02381 .49443 m
+.03006 .49443 L
+s
+[(0.8)] .01131 .49443 1 0 Mshowa
+.02381 .61803 m
+.03006 .61803 L
+s
+[(1)] .01131 .61803 1 0 Mshowa
+.125 Mabswid
+.02381 .0309 m
+.02756 .0309 L
+s
+.02381 .0618 m
+.02756 .0618 L
+s
+.02381 .09271 m
+.02756 .09271 L
+s
+.02381 .15451 m
+.02756 .15451 L
+s
+.02381 .18541 m
+.02756 .18541 L
+s
+.02381 .21631 m
+.02756 .21631 L
+s
+.02381 .27812 m
+.02756 .27812 L
+s
+.02381 .30902 m
+.02756 .30902 L
+s
+.02381 .33992 m
+.02756 .33992 L
+s
+.02381 .40172 m
+.02756 .40172 L
+s
+.02381 .43262 m
+.02756 .43262 L
+s
+.02381 .46353 m
+.02756 .46353 L
+s
+.02381 .52533 m
+.02756 .52533 L
+s
+.02381 .55623 m
+.02756 .55623 L
+s
+.02381 .58713 m
+.02756 .58713 L
+s
+.25 Mabswid
+.02381 0 m
+.02381 .61803 L
+s
+0 0 m
+1 0 L
+1 .61803 L
+0 .61803 L
+closepath
+clip
+newpath
+.5 Mabswid
+.02381 0 m
+.06244 .1079 L
+.08255 .19416 L
+.09396 .231 L
+.10458 .25997 L
+.1253 .30575 L
+.14415 .33859 L
+.18314 .38948 L
+.22307 .42666 L
+.26149 .45365 L
+.30236 .47611 L
+.34171 .49346 L
+.37954 .50725 L
+.41983 .51957 L
+.4586 .52963 L
+.49982 .5388 L
+.53953 .54643 L
+.57773 .55286 L
+.61837 .55889 L
+.6575 .56402 L
+.69908 .56887 L
+.73915 .57303 L
+.7777 .57663 L
+.8187 .58008 L
+.85819 .58308 L
+.89616 .5857 L
+.93659 .58823 L
+.9755 .59046 L
+.97619 .5905 L
+s
+% End of Graphics
+MathPictureEnd
+\
+\>"], "Graphics",
+ ImageSize->{288, 177.938},
+ ImageMargins->{{43, 0}, {0, 0}},
+ ImageRegion->{{0, 1}, {0, 1}},
+ ImageCache->GraphicsData["CompressedBitmap", "\<\
+eJztmllIFVEYx0fnXr0u2XbbtystGOnVbKOQQKIkQshACArCJNFoVYke6qEe
+6iF6KIgg6CEICoLAiIiQCCKEAsF2aN/3fV/Nc+b6zXL/33HmOm6QD2cO//P7
+/t85Z2bOmTtjaUV99aq1FfU1lRWRktqKDdU1lXWRBetr2yQ9SdOSIpqmNUQ0
+UW9tq8YK+ZctCk1bIg660AOilixqhUAza/nUqgMuKmpBanXEhoykZfIgqVbr
+n+hdsqwEbG3tfdJ0q8yhjJyvSKqrnOxJcz0lZeRU41juPm2BT+O3OwTddyCv
+0x3og4OOxgI8XKjIxshoXPYBuje67iIPODusSpqX6Bi5E1wGRhHAEVPF0Vwj
+XGeKUpzuPlnXDNSx1k0D/UErYQFwjncz11q0EsdWUxmY7b4epnEELS4jQcfT
+XGrp/2O7JUemLI1TlUwtwQRVi7nWXgn42C6zGhdzO2hAyVaTuJtLHnWPCL6r
+47P5zaG12q79TRy3LIx26A/vidZD/3DUmd89hQeB9itxXM52ijdPhP/sKTwV
+aD8MPIUGiPbG1ti+g2ZIYco8R4Ww7I85WimRcwho35XOaL01t1qUV+2XGusb
+Wkf86bGPGczrQw5U524FhYXb54dvvRWXw88A0FfeE100PYajvn/prbic7Uxv
+ngj/3EfwfkD71G24nO3+APrIe2Z1KY468yEh3Lm3gQccnduAFLZetwmHNgBo
+75XOcjln9+EE/eJlc7oGAct3Skvn8q8x28RAz85p1CuPfuZw0IqDzgwa9lvD
+DF15HvHBQHvTbbiciCEAes17hr3hyP2Vb/hQoL3sKXwY0F5YcDnbwzuAHE0I
+f+4bPgJoz3gcaU99w0cB7UniuJztMQB6zHuO9oYj90c8PhZoD3l8HNAeGLh6
+D5PvCdhncoWtTz8cIkC772uGbKDd6zhDwL6hjQcud1300x6BNOR8R+mMfimh
+s6dwNgeWTjVkMQFotw0LdBlOBNotHp9EuRVQDtBu8vhkoN2w4DLdFABd5z0R
+fo3Hc4F2lcfR168rPB4F2mUeR1+pWni8gOZIAaFvSc0WXMZPp1oz7zQDaJd4
+fCbQLvL4LOqCApoNtCYen0OeCqiIoAs8NJeg8865Kwb4Od6pmAIV0DyCzvLQ
+fIIaeaiEoDMG1JktZiHFnjbMfFr2F5HvKV99S8n3pNI3ZB+1jFhMWoOvfTL/
+0eK4r77l5HvMwNy+y1sqSpn+iBGILqPlZHGYh1YQdIiHVlK6gzxURU4HLJAc
+zGpq2s/HrxGlnLu9PLSRoN08tEmUKULayUNbyGk7D20jaCsP7SBoMw/tIqjO
+OTt7qGkdH79PlCEhVfGQPDsZQlrGQ0dFmS6kMh46QVAJDzVSuiIeaiKnQh5q
+ISjHOTvyaSgsamE+Xr5QkGc8i4dkyXwE9dou32qwt6eVRO8g0FrQZTFxH5AR
+KctMy9jMqCx3UbIe+y8FLekffHerzA==\
+\>"],
+ ImageRangeCache->{{{0, 287}, {176.938, 0}} -> {-21.2181, -0.0764114, \
+0.810174, 0.00624232}}],
+
+Cell[BoxData[
+ TagBox[
+  RowBox[{"\[SkeletonIndicator]", "Graphics", "\[SkeletonIndicator]"}],
+  False,
+  Editable->False]], "Output"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", " ", 
+   RowBox[{
+   "The", " ", "following", " ", "commands", " ", "will", " ", "show", " ", 
+    "results", " ", "from"}], " ", "*)"}], "\n", 
+  RowBox[{"(*", " ", 
+   RowBox[{"multiple", " ", "simulations", " ", "on", " ", "one", " ", 
+    RowBox[{"plot", ".", "  ", "The"}]}], "  ", "*)"}], "\n", 
+  RowBox[{"(*", " ", 
+   RowBox[{
+   "argument", " ", "of", " ", "the", " ", "Show", " ", "command", " ", 
+    "should", " ", "be", " ", "a"}], " ", "*)"}], "\n", 
+  RowBox[{"(*", " ", 
+   RowBox[{"comma", "-", 
+    RowBox[{
+    "separated", " ", "list", " ", "of", " ", "plot", " ", "names", " ", 
+     "generated"}]}], " ", "*)"}], "\n", 
+  RowBox[{"(*", " ", 
+   RowBox[{"using", " ", "the", " ", "commands", " ", 
+    RowBox[{"above", ".", "  ", "Shown"}], " ", "below", " ", "are"}], " ", 
+   "*)"}], "\n", 
+  RowBox[{"(*", " ", 
+   RowBox[{
+   "plots", " ", "of", " ", "normalized", " ", "cell", " ", "volume", " ", 
+    "and", " ", "normalized"}], " ", "*)"}], "\n", 
+  RowBox[{"(*", " ", 
+   RowBox[{
+   "intracellular", " ", "CPA", " ", "molarity", " ", "for", " ", "three", 
+    " ", "different"}], " ", "*)"}], "\n", 
+  RowBox[{"(*", " ", 
+   RowBox[{
+   "cases", " ", "of", " ", "step", " ", "increase", " ", "in", " ", 
+    "external", " ", "CPA"}], " ", "*)"}], "\n", 
+  RowBox[{"(*", " ", 
+   RowBox[{
+    RowBox[{"molarity", ":", " ", 
+     RowBox[{"0", " ", "to", " ", "0.3", " ", "M"}]}], ",", " ", 
+    RowBox[{
+    "0", " ", "to", " ", "0.6", " ", "M", " ", "and", " ", "0", " ", "to", 
+     " ", "0.9", " ", "M"}]}], " ", "*)"}], "\n", 
+  RowBox[{"(*", " ", 
+   RowBox[{
+   "The", " ", "plots", " ", "were", " ", "created", " ", "by", " ", 
+    "executing", " ", "the"}], " ", "*)"}], "\n", 
+  RowBox[{"(*", " ", 
+   RowBox[{
+   "simulation", " ", "cell", " ", "above", " ", "for", " ", "three", " ", 
+    "different"}], " ", "*)"}], "\n", 
+  RowBox[{"(*", " ", 
+   RowBox[{
+    RowBox[{"values", " ", "of", " ", "molf", " ", 
+     RowBox[{"(", 
+      RowBox[{"0.3", ",", " ", 
+       RowBox[{"0.6", " ", "and", " ", "0.9"}]}], ")"}]}], ",", " ", 
+    RowBox[{"then", " ", "after"}]}], " ", "*)"}], "\n", 
+  RowBox[{"(*", " ", 
+   RowBox[{
+    RowBox[{"each", " ", "simulation"}], ",", " ", 
+    RowBox[{"executing", " ", "the", " ", "plotting", " ", "cell"}]}], " ", 
+   "*)"}], "\n", 
+  RowBox[{"(*", " ", 
+   RowBox[{
+   "above", " ", "with", " ", "the", " ", "appropriate", " ", "plot", " ", 
+    "names", " ", 
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{"e", ".", "g"}], ".", " "}]}]}], "*)"}], "\n", 
+  RowBox[{"(*", " ", 
+   RowBox[{
+   "vol3", " ", "and", " ", "mol3", " ", "for", " ", "the", " ", "0.3", " ", 
+    "M", " ", 
+    RowBox[{"case", "."}]}], "  ", "*)"}], "\n", "\n", "\n", 
+  RowBox[{
+   RowBox[{"Show", "[", 
+    RowBox[{"vol0", ",", "vol9"}], "]"}], "\n", 
+   RowBox[{"Show", "[", 
+    RowBox[{"mol0", ",", "mol9"}], "]"}]}]}]], "Input"],
+
+Cell[GraphicsData["PostScript", "\<\
+%!
+%%Creator: Mathematica
+%%AspectRatio: .61803 
+MathPictureStart
+/Mabs {
+Mgmatrix idtransform
+Mtmatrix dtransform
+} bind def
+/Mabsadd { Mabs
+3 -1 roll add
+3 1 roll add
+exch } bind def
+%% Graphics
+%%IncludeResource: font Courier
+%%IncludeFont: Courier
+/Courier findfont 10  scalefont  setfont
+% Scaling calculations
+0.0238095 0.0047619 -0.618034 1.23607 [
+[.2619 .60553 -6 -9 ]
+[.2619 .60553 6 0 ]
+[.5 .60553 -9 -9 ]
+[.5 .60553 9 0 ]
+[.7381 .60553 -9 -9 ]
+[.7381 .60553 9 0 ]
+[.97619 .60553 -9 -9 ]
+[.97619 .60553 9 0 ]
+[.01131 0 -18 -4.5 ]
+[.01131 0 0 4.5 ]
+[.01131 .12361 -18 -4.5 ]
+[.01131 .12361 0 4.5 ]
+[.01131 .24721 -18 -4.5 ]
+[.01131 .24721 0 4.5 ]
+[.01131 .37082 -18 -4.5 ]
+[.01131 .37082 0 4.5 ]
+[.01131 .49443 -18 -4.5 ]
+[.01131 .49443 0 4.5 ]
+[ 0 0 0 0 ]
+[ 1 .62428 0 0 ]
+] MathScale
+% Start of Graphics
+1 setlinecap
+1 setlinejoin
+newpath
+0 g
+.25 Mabswid
+[ ] 0 setdash
+.2619 .61803 m
+.2619 .62428 L
+s
+[(50)] .2619 .60553 0 1 Mshowa
+.5 .61803 m
+.5 .62428 L
+s
+[(100)] .5 .60553 0 1 Mshowa
+.7381 .61803 m
+.7381 .62428 L
+s
+[(150)] .7381 .60553 0 1 Mshowa
+.97619 .61803 m
+.97619 .62428 L
+s
+[(200)] .97619 .60553 0 1 Mshowa
+.125 Mabswid
+.07143 .61803 m
+.07143 .62178 L
+s
+.11905 .61803 m
+.11905 .62178 L
+s
+.16667 .61803 m
+.16667 .62178 L
+s
+.21429 .61803 m
+.21429 .62178 L
+s
+.30952 .61803 m
+.30952 .62178 L
+s
+.35714 .61803 m
+.35714 .62178 L
+s
+.40476 .61803 m
+.40476 .62178 L
+s
+.45238 .61803 m
+.45238 .62178 L
+s
+.54762 .61803 m
+.54762 .62178 L
+s
+.59524 .61803 m
+.59524 .62178 L
+s
+.64286 .61803 m
+.64286 .62178 L
+s
+.69048 .61803 m
+.69048 .62178 L
+s
+.78571 .61803 m
+.78571 .62178 L
+s
+.83333 .61803 m
+.83333 .62178 L
+s
+.88095 .61803 m
+.88095 .62178 L
+s
+.92857 .61803 m
+.92857 .62178 L
+s
+.25 Mabswid
+0 .61803 m
+1 .61803 L
+s
+.02381 0 m
+.03006 0 L
+s
+[(0.5)] .01131 0 1 0 Mshowa
+.02381 .12361 m
+.03006 .12361 L
+s
+[(0.6)] .01131 .12361 1 0 Mshowa
+.02381 .24721 m
+.03006 .24721 L
+s
+[(0.7)] .01131 .24721 1 0 Mshowa
+.02381 .37082 m
+.03006 .37082 L
+s
+[(0.8)] .01131 .37082 1 0 Mshowa
+.02381 .49443 m
+.03006 .49443 L
+s
+[(0.9)] .01131 .49443 1 0 Mshowa
+.125 Mabswid
+.02381 .02472 m
+.02756 .02472 L
+s
+.02381 .04944 m
+.02756 .04944 L
+s
+.02381 .07416 m
+.02756 .07416 L
+s
+.02381 .09889 m
+.02756 .09889 L
+s
+.02381 .14833 m
+.02756 .14833 L
+s
+.02381 .17305 m
+.02756 .17305 L
+s
+.02381 .19777 m
+.02756 .19777 L
+s
+.02381 .22249 m
+.02756 .22249 L
+s
+.02381 .27193 m
+.02756 .27193 L
+s
+.02381 .29666 m
+.02756 .29666 L
+s
+.02381 .32138 m
+.02756 .32138 L
+s
+.02381 .3461 m
+.02756 .3461 L
+s
+.02381 .39554 m
+.02756 .39554 L
+s
+.02381 .42026 m
+.02756 .42026 L
+s
+.02381 .44498 m
+.02756 .44498 L
+s
+.02381 .46971 m
+.02756 .46971 L
+s
+.02381 .51915 m
+.02756 .51915 L
+s
+.02381 .54387 m
+.02756 .54387 L
+s
+.02381 .56859 m
+.02756 .56859 L
+s
+.02381 .59331 m
+.02756 .59331 L
+s
+.25 Mabswid
+.02381 0 m
+.02381 .61803 L
+s
+0 0 m
+1 0 L
+1 .61803 L
+0 .61803 L
+closepath
+clip
+newpath
+.5 Mabswid
+.02381 .61803 m
+.02605 .48975 L
+.02846 .3733 L
+.03053 .29077 L
+.03279 .22011 L
+.03416 .18639 L
+.03543 .16138 L
+.03665 .14313 L
+.03793 .12822 L
+.03908 .11818 L
+.04016 .1112 L
+.04135 .10576 L
+.04262 .1019 L
+.04393 .0996 L
+.04516 .09865 L
+.04586 .09847 L
+.0465 .09853 L
+.04723 .09878 L
+.04793 .09919 L
+.04919 .10026 L
+.05035 .10153 L
+.05297 .10503 L
+.06244 .12014 L
+.10458 .18083 L
+.14407 .22594 L
+.18204 .26223 L
+.22246 .29534 L
+.26137 .32306 L
+.30273 .34899 L
+.34258 .37113 L
+.38091 .39024 L
+.42169 .40857 L
+.46096 .42451 L
+.49871 .43848 L
+.53891 .45205 L
+.5776 .464 L
+.61874 .47562 L
+.65836 .48588 L
+.69647 .49497 L
+.73703 .50388 L
+.77608 .51179 L
+.81757 .51955 L
+.85756 .52644 L
+.89602 .53258 L
+.93694 .53863 L
+.97619 .544 L
+s
+.02381 .61803 m
+.02605 .49023 L
+.02846 .37417 L
+.03053 .29188 L
+.03279 .22136 L
+.03416 .18767 L
+.03543 .16265 L
+.03665 .14436 L
+.03793 .12938 L
+.03908 .11928 L
+.04016 .11224 L
+.04135 .10674 L
+.04262 .10281 L
+.04393 .10045 L
+.04516 .09945 L
+.04586 .09925 L
+.0465 .09929 L
+.04723 .09952 L
+.04793 .09991 L
+.04919 .10095 L
+.05035 .1022 L
+.05297 .10567 L
+.06244 .12073 L
+.10458 .1814 L
+.14407 .2265 L
+.18204 .26279 L
+.22246 .29589 L
+.26137 .3236 L
+.30273 .34952 L
+.34258 .37166 L
+.38091 .39076 L
+.42169 .40907 L
+.46096 .42501 L
+.49871 .43896 L
+.53891 .45253 L
+.5776 .46446 L
+.61874 .47607 L
+.65836 .48632 L
+.69647 .49539 L
+.73703 .50429 L
+.77608 .51219 L
+.81757 .51993 L
+.85756 .52681 L
+.89602 .53294 L
+.93694 .53897 L
+.97619 .54433 L
+s
+% End of Graphics
+MathPictureEnd
+\
+\>"], "Graphics",
+ ImageSize->{288, 177.938},
+ ImageMargins->{{43, 0}, {0, 0}},
+ ImageRegion->{{0, 1}, {0, 1}},
+ ImageCache->GraphicsData["CompressedBitmap", "\<\
+eJztmn2IFVUYxufuzLW7m5lbWtkH3VWzSNO9m6KVUQhpEUuiUCEZ3UzcJUVZ
+F6QoCqQoiqJAopCQECRERaKCikAIQRBCseyLMrWiL+3b1Oy255y7z8w993nf
++7GTCLp/jO+c9/c87zlnZs58XLuL/T2LlxX7excV83P6iit6ehetzM9e3jfQ
+FGaCIJMPgmBrPjBxaSAsb+xfh9mUd2rELeafFqONbENYgsvAns3GTe1OE2RL
+5aAEcuDvLBtkK9oHczYYqcrPrl2/tTkDr60OKzuUCPkmDTzZsBpW8aHImSgr
+HZSkZnQa+Rak21J0PdPrM6OqGFVoohiMZL27aiO0lVe3kjOoWzYorZLxNSpE
+T0suKjWyQGYVZ/EqbmotjU5upTCenEGIlvm3dpmo1kSx1bYOX7rQ8gpsET6h
+VsgRhTYG1qN/XDI+l9oQaVas9HGXdCdy1bne2rCijSiOJRQt5PAzzVG1ynCi
++DtlxTlEcURVjCCKv1TFuUTx55AUbH6Z5g+1SjtR/K4qziOK31JWnE8Uv6qK
+UUTxS43ZYprDapULiOIQV5RvPRcSxc9JRZhUBBc1ho8h+E8yfjHBf5TxSwj+
+QwK3mUsJ9L3seRkOhgJdTjy/lfE8wb9xSf0mHJI2nzMFOgh3sJzkaz9bTpnz
+WMIdUJ3ZEuqPw3DjCLe/OWfbNJ5kv1b96nmtMtwVhNunOtd+yKmsMIFU+Mol
+63l3MhZXEosvXZKdklfBVoGuJp6fJ3CbmUigz2TPSQT/VMavIfgnMj6Z4Htl
+fArBP5bxToJ/JOMFgu/xp68LB2KP7DSVOO2S8WnwVKDpgD6UoetI4Z0yfj08
+FWgm8dzhT8uNcNohO91EnLbL+M3wVKBZgD5IQLbhFlJumw/NRlSVupXo3/eh
+2xBVpW5H9J6f6kb0jp+6g1R920ENvQFabi6iskWzC6D1mIfozaG52V7Oh9sb
+qluOjOtORFtTGNfdiLak4LYA0SaXjA9bKxnKPYg2Ojw+Fe5F9Lqfug/RBj91
+P4qs91OLEb3mp5YgWuenehG96qceRLTWTy1DN172UysQveSn+hCt8VP9MHzR
+T61C6vlEyrs+HgL0rAw9AuhpGXoM0JN+T1YjtVrWPwHocRl6CtCjMvQMoIdl
+6DlAq2ToBbO1bxsrZWgNoOX+wF9BkaWyfi30PTK0DtADMrQe5YoOqmNttFn2
+2WUDKi50ZkN4VDZ7G9G5Baqf/kPDZkR3qS459J6N3K6Pdsmap7o08ghs9t6C
+b3eqvu+a7TDTNMdh4urJ7uy2ziwnZKfNdrjPlKGdcJqegGwXdkNfkPV7oZ8k
+Q1/AaYIM7YdThwx9Z7Y50zRGhg4DapehIyg33B/4Ccz9qfQ1v1Y+ld8wZmDo
+8T1+KmmLowKyIeEKmOWQaJVfFdzZyC8l4RcH9iIioEJzQSkaak6VRac0VFRt
+pnNzQ/1d6UppTiodsvV3gL2WnpYToZ1bWkcyJsq4SJwIe7VE8SX1v10bkd9/
+rWhnk0PWzwG7cswg44m49lqIBECo2Qmd/KXzJA2ZHW1vUZ1GOLbkdpFq1W6W
+Epd8Zdm221PkrjgCczky0Wv20Zg967KP0IxLu+10q+uemd0++Z9SQeY/Emkw
+Og==\
+\>"],
+ ImageRangeCache->{{{0, 287}, {176.938, 0}} -> {-16.6539, 0.480156, 0.779335, \
+0.00300235}}],
+
+Cell[BoxData[
+ TagBox[
+  RowBox[{"\[SkeletonIndicator]", "Graphics", "\[SkeletonIndicator]"}],
+  False,
+  Editable->False]], "Output"],
+
+Cell[GraphicsData["PostScript", "\<\
+%!
+%%Creator: Mathematica
+%%AspectRatio: .61803 
+MathPictureStart
+/Mabs {
+Mgmatrix idtransform
+Mtmatrix dtransform
+} bind def
+/Mabsadd { Mabs
+3 -1 roll add
+3 1 roll add
+exch } bind def
+%% Graphics
+%%IncludeResource: font Courier
+%%IncludeFont: Courier
+/Courier findfont 10  scalefont  setfont
+% Scaling calculations
+0.0238095 0.0047619 0 0.618034 [
+[.2619 -0.0125 -6 -9 ]
+[.2619 -0.0125 6 0 ]
+[.5 -0.0125 -9 -9 ]
+[.5 -0.0125 9 0 ]
+[.7381 -0.0125 -9 -9 ]
+[.7381 -0.0125 9 0 ]
+[.97619 -0.0125 -9 -9 ]
+[.97619 -0.0125 9 0 ]
+[.01131 .12361 -18 -4.5 ]
+[.01131 .12361 0 4.5 ]
+[.01131 .24721 -18 -4.5 ]
+[.01131 .24721 0 4.5 ]
+[.01131 .37082 -18 -4.5 ]
+[.01131 .37082 0 4.5 ]
+[.01131 .49443 -18 -4.5 ]
+[.01131 .49443 0 4.5 ]
+[.01131 .61803 -6 -4.5 ]
+[.01131 .61803 0 4.5 ]
+[ 0 0 0 0 ]
+[ 1 .61803 0 0 ]
+] MathScale
+% Start of Graphics
+1 setlinecap
+1 setlinejoin
+newpath
+0 g
+.25 Mabswid
+[ ] 0 setdash
+.2619 0 m
+.2619 .00625 L
+s
+[(50)] .2619 -0.0125 0 1 Mshowa
+.5 0 m
+.5 .00625 L
+s
+[(100)] .5 -0.0125 0 1 Mshowa
+.7381 0 m
+.7381 .00625 L
+s
+[(150)] .7381 -0.0125 0 1 Mshowa
+.97619 0 m
+.97619 .00625 L
+s
+[(200)] .97619 -0.0125 0 1 Mshowa
+.125 Mabswid
+.07143 0 m
+.07143 .00375 L
+s
+.11905 0 m
+.11905 .00375 L
+s
+.16667 0 m
+.16667 .00375 L
+s
+.21429 0 m
+.21429 .00375 L
+s
+.30952 0 m
+.30952 .00375 L
+s
+.35714 0 m
+.35714 .00375 L
+s
+.40476 0 m
+.40476 .00375 L
+s
+.45238 0 m
+.45238 .00375 L
+s
+.54762 0 m
+.54762 .00375 L
+s
+.59524 0 m
+.59524 .00375 L
+s
+.64286 0 m
+.64286 .00375 L
+s
+.69048 0 m
+.69048 .00375 L
+s
+.78571 0 m
+.78571 .00375 L
+s
+.83333 0 m
+.83333 .00375 L
+s
+.88095 0 m
+.88095 .00375 L
+s
+.92857 0 m
+.92857 .00375 L
+s
+.25 Mabswid
+0 0 m
+1 0 L
+s
+.02381 .12361 m
+.03006 .12361 L
+s
+[(0.2)] .01131 .12361 1 0 Mshowa
+.02381 .24721 m
+.03006 .24721 L
+s
+[(0.4)] .01131 .24721 1 0 Mshowa
+.02381 .37082 m
+.03006 .37082 L
+s
+[(0.6)] .01131 .37082 1 0 Mshowa
+.02381 .49443 m
+.03006 .49443 L
+s
+[(0.8)] .01131 .49443 1 0 Mshowa
+.02381 .61803 m
+.03006 .61803 L
+s
+[(1)] .01131 .61803 1 0 Mshowa
+.125 Mabswid
+.02381 .0309 m
+.02756 .0309 L
+s
+.02381 .0618 m
+.02756 .0618 L
+s
+.02381 .09271 m
+.02756 .09271 L
+s
+.02381 .15451 m
+.02756 .15451 L
+s
+.02381 .18541 m
+.02756 .18541 L
+s
+.02381 .21631 m
+.02756 .21631 L
+s
+.02381 .27812 m
+.02756 .27812 L
+s
+.02381 .30902 m
+.02756 .30902 L
+s
+.02381 .33992 m
+.02756 .33992 L
+s
+.02381 .40172 m
+.02756 .40172 L
+s
+.02381 .43262 m
+.02756 .43262 L
+s
+.02381 .46353 m
+.02756 .46353 L
+s
+.02381 .52533 m
+.02756 .52533 L
+s
+.02381 .55623 m
+.02756 .55623 L
+s
+.02381 .58713 m
+.02756 .58713 L
+s
+.25 Mabswid
+.02381 0 m
+.02381 .61803 L
+s
+0 0 m
+1 0 L
+1 .61803 L
+0 .61803 L
+closepath
+clip
+newpath
+.5 Mabswid
+.02381 0 m
+.06244 .10795 L
+.08255 .19432 L
+.09396 .23118 L
+.10458 .26016 L
+.1253 .30595 L
+.14415 .33878 L
+.18314 .38964 L
+.22307 .42679 L
+.26149 .45375 L
+.30236 .47619 L
+.34171 .49352 L
+.37954 .5073 L
+.41983 .5196 L
+.4586 .52965 L
+.49982 .53881 L
+.53953 .54643 L
+.57773 .55286 L
+.61837 .55888 L
+.6575 .56401 L
+.69908 .56885 L
+.73915 .57301 L
+.7777 .5766 L
+.8187 .58005 L
+.85819 .58304 L
+.89616 .58566 L
+.93659 .5882 L
+.9755 .59042 L
+.97619 .59046 L
+s
+.02381 0 m
+.06244 .1079 L
+.08255 .19416 L
+.09396 .231 L
+.10458 .25997 L
+.1253 .30575 L
+.14415 .33859 L
+.18314 .38948 L
+.22307 .42666 L
+.26149 .45365 L
+.30236 .47611 L
+.34171 .49346 L
+.37954 .50725 L
+.41983 .51957 L
+.4586 .52963 L
+.49982 .5388 L
+.53953 .54643 L
+.57773 .55286 L
+.61837 .55889 L
+.6575 .56402 L
+.69908 .56887 L
+.73915 .57303 L
+.7777 .57663 L
+.8187 .58008 L
+.85819 .58308 L
+.89616 .5857 L
+.93659 .58823 L
+.9755 .59046 L
+.97619 .5905 L
+s
+% End of Graphics
+MathPictureEnd
+\
+\>"], "Graphics",
+ ImageSize->{288, 177.938},
+ ImageMargins->{{43, 0}, {0, 0}},
+ ImageRegion->{{0, 1}, {0, 1}},
+ ImageCache->GraphicsData["CompressedBitmap", "\<\
+eJztmllIFVEYx0fnXr0u2XbbtystGOnVbKOQQKIkQshACArCJNFoVYke6qEe
+6iF6KIgg6CEICoLAiIiQCCKEAsF2aN/3fV/Nc+b6zXL/33HmOm6QD2cO//P7
+/t85Z2bOmTtjaUV99aq1FfU1lRWRktqKDdU1lXWRBetr2yQ9SdOSIpqmNUQ0
+UW9tq8YK+ZctCk1bIg660AOilixqhUAza/nUqgMuKmpBanXEhoykZfIgqVbr
+n+hdsqwEbG3tfdJ0q8yhjJyvSKqrnOxJcz0lZeRU41juPm2BT+O3OwTddyCv
+0x3og4OOxgI8XKjIxshoXPYBuje67iIPODusSpqX6Bi5E1wGRhHAEVPF0Vwj
+XGeKUpzuPlnXDNSx1k0D/UErYQFwjncz11q0EsdWUxmY7b4epnEELS4jQcfT
+XGrp/2O7JUemLI1TlUwtwQRVi7nWXgn42C6zGhdzO2hAyVaTuJtLHnWPCL6r
+47P5zaG12q79TRy3LIx26A/vidZD/3DUmd89hQeB9itxXM52ijdPhP/sKTwV
+aD8MPIUGiPbG1ti+g2ZIYco8R4Ww7I85WimRcwho35XOaL01t1qUV+2XGusb
+Wkf86bGPGczrQw5U524FhYXb54dvvRWXw88A0FfeE100PYajvn/prbic7Uxv
+ngj/3EfwfkD71G24nO3+APrIe2Z1KY468yEh3Lm3gQccnduAFLZetwmHNgBo
+75XOcjln9+EE/eJlc7oGAct3Skvn8q8x28RAz85p1CuPfuZw0IqDzgwa9lvD
+DF15HvHBQHvTbbiciCEAes17hr3hyP2Vb/hQoL3sKXwY0F5YcDnbwzuAHE0I
+f+4bPgJoz3gcaU99w0cB7UniuJztMQB6zHuO9oYj90c8PhZoD3l8HNAeGLh6
+D5PvCdhncoWtTz8cIkC772uGbKDd6zhDwL6hjQcud1300x6BNOR8R+mMfimh
+s6dwNgeWTjVkMQFotw0LdBlOBNotHp9EuRVQDtBu8vhkoN2w4DLdFABd5z0R
+fo3Hc4F2lcfR168rPB4F2mUeR1+pWni8gOZIAaFvSc0WXMZPp1oz7zQDaJd4
+fCbQLvL4LOqCApoNtCYen0OeCqiIoAs8NJeg8865Kwb4Od6pmAIV0DyCzvLQ
+fIIaeaiEoDMG1JktZiHFnjbMfFr2F5HvKV99S8n3pNI3ZB+1jFhMWoOvfTL/
+0eK4r77l5HvMwNy+y1sqSpn+iBGILqPlZHGYh1YQdIiHVlK6gzxURU4HLJAc
+zGpq2s/HrxGlnLu9PLSRoN08tEmUKULayUNbyGk7D20jaCsP7SBoMw/tIqjO
+OTt7qGkdH79PlCEhVfGQPDsZQlrGQ0dFmS6kMh46QVAJDzVSuiIeaiKnQh5q
+ISjHOTvyaSgsamE+Xr5QkGc8i4dkyXwE9dou32qwt6eVRO8g0FrQZTFxH5AR
+KctMy9jMqCx3UbIe+y8FLekffHerzA==\
+\>"],
+ ImageRangeCache->{{{0, 287}, {176.938, 0}} -> {-21.2181, -0.0764114, \
+0.810174, 0.00624232}}],
+
+Cell[BoxData[
+ TagBox[
+  RowBox[{"\[SkeletonIndicator]", "Graphics", "\[SkeletonIndicator]"}],
+  False,
+  Editable->False]], "Output"]
+}, Open  ]]
+},
+WindowSize->{1041, 1021},
+WindowMargins->{{-1766, Automatic}, {Automatic, 0}},
+DockedCells->FEPrivate`FrontEndResource[
+ "FEExpressions", "CompatibilityToolbar"],
+FrontEndVersion->"8.0 for Mac OS X x86 (32-bit, 64-bit Kernel) (November 6, \
+2010)",
+StyleDefinitions->"Default.nb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[CellGroupData[{
+Cell[579, 22, 14742, 412, 1783, "Input"],
+Cell[15324, 436, 51, 0, 27, "Output"],
+Cell[15378, 438, 28, 0, 27, "Output"],
+Cell[15409, 440, 31, 0, 27, "Output"],
+Cell[15443, 442, 30, 0, 27, "Output"],
+Cell[15476, 444, 31, 0, 27, "Output"],
+Cell[15510, 446, 32, 0, 27, "Output"],
+Cell[15545, 448, 60, 1, 47, "Output"],
+Cell[15608, 451, 58, 1, 47, "Output"],
+Cell[15669, 454, 38, 0, 27, "Output"],
+Cell[15710, 456, 31, 0, 27, "Output"],
+Cell[15744, 458, 33, 0, 27, "Output"],
+Cell[15780, 460, 33, 0, 27, "Output"],
+Cell[15816, 462, 37, 0, 27, "Output"],
+Cell[15856, 464, 55, 1, 47, "Output"],
+Cell[15914, 467, 28, 0, 27, "Output"],
+Cell[15945, 469, 32, 0, 27, "Output"],
+Cell[15980, 471, 50, 0, 30, "Output"],
+Cell[16033, 473, 50, 0, 30, "Output"],
+Cell[16086, 475, 50, 0, 30, "Output"],
+Cell[16139, 477, 30, 0, 27, "Output"],
+Cell[16172, 479, 28, 0, 27, "Output"],
+Cell[16203, 481, 50, 0, 30, "Output"],
+Cell[16256, 483, 32, 0, 27, "Output"],
+Cell[16291, 485, 34, 0, 27, "Output"],
+Cell[16328, 487, 650, 23, 27, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[17015, 515, 3154, 87, 388, "Input"],
+Cell[20172, 604, 28, 0, 27, "Output"],
+Cell[20203, 606, 30, 0, 27, "Output"],
+Cell[20236, 608, 31, 0, 27, "Output"],
+Cell[20270, 610, 28, 0, 27, "Output"],
+Cell[20301, 612, 28, 0, 27, "Output"],
+Cell[20332, 614, 28, 0, 27, "Output"],
+Cell[20363, 616, 5558, 294, 186, 3664, 259, "GraphicsData", "PostScript", \
+"Graphics"],
+Cell[25924, 912, 134, 4, 27, "Output"],
+Cell[26061, 918, 4871, 259, 186, 3126, 227, "GraphicsData", "PostScript", \
+"Graphics"],
+Cell[30935, 1179, 134, 4, 27, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[31106, 1188, 2927, 77, 298, "Input"],
+Cell[34036, 1267, 6290, 341, 186, 4392, 306, "GraphicsData", "PostScript", \
+"Graphics"],
+Cell[40329, 1610, 134, 4, 27, "Output"],
+Cell[40466, 1616, 5322, 289, 186, 3577, 257, "GraphicsData", "PostScript", \
+"Graphics"],
+Cell[45791, 1907, 134, 4, 27, "Output"]
+}, Open  ]]
+}
+]
+*)
+
+(* End of internal cache information *)
+
